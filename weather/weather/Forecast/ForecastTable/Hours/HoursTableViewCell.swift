@@ -21,6 +21,7 @@ class HoursTableViewCell: UITableViewCell {
        
         collectionView.register(HourCollectionViewCell.self, forCellWithReuseIdentifier: HourCollectionViewCell.id)
         collectionView.isUserInteractionEnabled = true
+        collectionView.showsHorizontalScrollIndicator = false
         
         return collectionView
     }()
@@ -73,13 +74,13 @@ class HoursTableViewCell: UITableViewCell {
     
     func setupConstraints() {
         NSLayoutConstraint.activate([
-            info24Label.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 33),
+            info24Label.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 24),
             info24Label.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16)
         ])
         
         NSLayoutConstraint.activate([
             hoursCollection.topAnchor.constraint(equalTo: info24Label.bottomAnchor, constant: 24),
-            hoursCollection.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -24),
+            hoursCollection.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
             hoursCollection.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
             hoursCollection.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16)
         ])
@@ -120,9 +121,9 @@ extension HoursTableViewCell: UICollectionViewDelegateFlowLayout {
 
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
         UIEdgeInsets(
-            top: 20,
+            top: 10,
             left: 0,
-            bottom: 20,
+            bottom: 10,
             right: 0
         )
     }

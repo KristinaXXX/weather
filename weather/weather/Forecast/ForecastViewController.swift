@@ -27,10 +27,9 @@ class ForecastViewController: UIViewController {
         tableView.translatesAutoresizingMaskIntoConstraints = false
         tableView.register(WeatherNowHeaderView.self, forHeaderFooterViewReuseIdentifier: WeatherNowHeaderView.id)
         tableView.register(HoursTableViewCell.self, forCellReuseIdentifier: HoursTableViewCell.id)
-        tableView.register(DaysTableViewCell.self, forCellReuseIdentifier: DaysTableViewCell.id)
+        tableView.register(DayTableViewCell.self, forCellReuseIdentifier: DayTableViewCell.id)
         tableView.register(DaysHeaderFooterView.self, forHeaderFooterViewReuseIdentifier: DaysHeaderFooterView.id)
-        //tableView.separatorStyle = .none
-        tableView.separatorInset = UIEdgeInsets(top: 10, left: 16, bottom: 0, right: 16)
+        tableView.separatorStyle = .none
         tableView.backgroundColor = .white
         
         return tableView
@@ -99,7 +98,7 @@ extension ForecastViewController: UITableViewDataSource {
             let cell = tableView.dequeueReusableCell(withIdentifier: HoursTableViewCell.id, for: indexPath) as! HoursTableViewCell
             return cell
         case 1:
-            let cell = tableView.dequeueReusableCell(withIdentifier: DaysTableViewCell.id, for: indexPath) as! DaysTableViewCell
+            let cell = tableView.dequeueReusableCell(withIdentifier: DayTableViewCell.id, for: indexPath) as! DayTableViewCell
             cell.update()
             return cell
         default:
@@ -124,9 +123,9 @@ extension ForecastViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         switch indexPath.section {
         case 0:
-            186
+            153
         default:
-            56
+            66
         }
     }
 }

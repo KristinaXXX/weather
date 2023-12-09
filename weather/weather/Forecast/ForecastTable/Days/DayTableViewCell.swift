@@ -7,22 +7,23 @@
 
 import UIKit
 
-class DaysTableViewCell: UITableViewCell {
+class DayTableViewCell: UITableViewCell {
 
-    static let id = "DaysTableViewCell"
+    static let id = "DayTableViewCell"
 
     private lazy var weatherIcon: UIImageView = {
-        let imageView = UIImageView(image: .next.withTintColor(.black))
+        let imageView = UIImageView()
         imageView.translatesAutoresizingMaskIntoConstraints = false
         return imageView
     }()
     
     private lazy var nextIcon: UIImageView = {
-        let imageView = UIImageView()
+        let imageView = UIImageView(image: .next.withTintColor(.black))
         imageView.translatesAutoresizingMaskIntoConstraints = false
         let gr = UITapGestureRecognizer(target: self, action: #selector(tapNextIcon))
         imageView.addGestureRecognizer(gr)
         imageView.isUserInteractionEnabled = true
+        imageView.contentMode = .scaleAspectFit
         return imageView
     }()
     
@@ -59,6 +60,14 @@ class DaysTableViewCell: UITableViewCell {
         return view
     }()
     
+    private let mainView: UIView = {
+        let view = UIView()
+        view.translatesAutoresizingMaskIntoConstraints = false
+        view.backgroundColor = .main
+        view.layer.cornerRadius = 5
+        return view
+    }()
+    
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: .subtitle, reuseIdentifier: reuseIdentifier)
         addSubviews()
@@ -71,6 +80,7 @@ class DaysTableViewCell: UITableViewCell {
     }
     
     private func addSubviews() {
+        contentView.addSubview(mainView)
         contentView.addSubview(weatherIcon)
         contentView.addSubview(dateTimeLabel)
         contentView.addSubview(precipitationLabel)
@@ -81,14 +91,20 @@ class DaysTableViewCell: UITableViewCell {
     
     private func tuneView() {
         contentView.clipsToBounds = true
-        contentView.backgroundColor = .main
-        contentView.layer.cornerRadius = 5
+        contentView.backgroundColor = .white
     }
     
     func setupConstraints() {
         NSLayoutConstraint.activate([
-            dateTimeLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 10),
-            dateTimeLabel.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 6)
+            mainView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
+            mainView.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 10),
+            mainView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
+            mainView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
+            
+        ])
+        NSLayoutConstraint.activate([
+            dateTimeLabel.leadingAnchor.constraint(equalTo: mainView.leadingAnchor, constant: 10),
+            dateTimeLabel.topAnchor.constraint(equalTo: mainView.topAnchor, constant: 6)
         ])
         
         NSLayoutConstraint.activate([
@@ -104,20 +120,20 @@ class DaysTableViewCell: UITableViewCell {
         ])
         
         NSLayoutConstraint.activate([
-            precipitationInfoLabel.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
-            precipitationInfoLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 66)
+            precipitationInfoLabel.centerYAnchor.constraint(equalTo: mainView.centerYAnchor),
+            precipitationInfoLabel.leadingAnchor.constraint(equalTo: mainView.leadingAnchor, constant: 66)
         ])
         
         NSLayoutConstraint.activate([
-            maxMinTempLabel.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
-            maxMinTempLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -26)
+            maxMinTempLabel.centerYAnchor.constraint(equalTo: mainView.centerYAnchor),
+            maxMinTempLabel.trailingAnchor.constraint(equalTo: mainView.trailingAnchor, constant: -26)
         ])
         
         NSLayoutConstraint.activate([
-            nextIcon.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
-            nextIcon.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -10),
-            nextIcon.widthAnchor.constraint(equalToConstant: 6),
-            nextIcon.heightAnchor.constraint(equalToConstant: 9.5)
+            nextIcon.centerYAnchor.constraint(equalTo: mainView.centerYAnchor),
+            nextIcon.trailingAnchor.constraint(equalTo: mainView.trailingAnchor, constant: -10),
+            nextIcon.widthAnchor.constraint(equalToConstant: 9),
+            nextIcon.heightAnchor.constraint(equalToConstant: 15)
         ])
     }
     
