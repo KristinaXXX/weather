@@ -6,53 +6,57 @@
 //
 
 import Foundation
+import Alamofire
+import UIKit
 
-//struct NetworkService {
-//
-//    static func requestJSONDecoder(appConfiguration: AppConfiguration, completion: @escaping (Result<Any, Error>) -> Void) {
-//        
-//        let url = appConfiguration.url!
-//        let session = URLSession.shared
-//        
-//        let task = session.dataTask(with: url) { data, response, error in
-//            
-//            if let error {
-//                completion(.failure(NetworkError.error(error.localizedDescription)))
-//                return
-//            }
-//            
-//            if let httpResponse = response as? HTTPURLResponse {
-//                if httpResponse.statusCode != 200 {
-//                    completion(.failure(NetworkError.error(String(httpResponse.statusCode))))
-//                    return
-//                }
-//            }
-//            
-//            guard let data else {
-//                completion(.failure(NetworkError.emptyData))
-//                return
-//            }
-//        
-//            let decoder = JSONDecoder()
-//            do {
-//                switch appConfiguration {
-//                case .chucknorrisRandom:
-//                    let dataDecode = try decoder.decode(Quote.self, from: data)
-//                    completion(.success(dataDecode))
-//                }
-//                
-//            } catch {
-//                completion(.failure(NetworkError.parseError))
-//            }
-//        }
-//        task.resume()
-//    }
-//
-//}
-//
-//enum AppConfiguration: String, CaseIterable {
-//    case chucknorrisRandom = "https://api.chucknorris.io/jokes/random"
-//    var url: URL? {
-//        URL(string: self.rawValue)
-//    }
-//}
+typealias completionCurrentWeatherResponse = (Result<CurrentWeatherResponse, Error>) -> Void
+typealias completionForecastResponse = (Result<ForecastResponse, Error>) -> Void
+
+struct NetworkService {
+    
+    static func loadCurrentWeather(coordinates: Coord, completion: @escaping completionCurrentWeatherResponse)  {
+        Task(priority: .userInitiated) {
+            do {
+                var parameters: [String: Any] = [:]
+                parameters["lat"] = coordinates.lat
+                parameters["lon"] = coordinates.lon
+                parameters["appid"] = "01fe6c1ac12469d4fc119476e3979bb7"
+                parameters["units"] = "metric"
+                parameters["lang"] = "ru"
+                let request = AF.request(AppConfiguration.currentWeatherData.rawValue, parameters: parameters)
+                let value = try await request.serializingDecodable(CurrentWeatherResponse.self).value
+                completion(.success(value))
+            } catch {
+                completion(.failure(NetworkError.error(error.localizedDescription)))
+            }
+        }
+    }
+    
+    static func loadForecast(coordinates: Coord, completion: @escaping completionForecastResponse)  {
+        Task(priority: .userInitiated) {
+            do {
+                var parameters: [String: Any] = [:]
+                parameters["lat"] = coordinates.lat
+                parameters["lon"] = coordinates.lon
+                parameters["appid"] = "01fe6c1ac12469d4fc119476e3979bb7"
+                parameters["units"] = "metric"
+                parameters["lang"] = "ru"
+                let request = AF.request(AppConfiguration.forecast5Days.rawValue, parameters: parameters)
+                let value = try await request.serializingDecodable(ForecastResponse.self).value
+                completion(.success(value))
+            } catch {
+                completion(.failure(NetworkError.error(error.localizedDescription)))
+            }
+        }
+    }
+}
+
+enum AppConfiguration: String, CaseIterable {
+    case currentWeatherData = "https://api.openweathermap.org/data/2.5/weather"
+    case forecast5Days = "https://api.openweathermap.org/data/2.5/forecast"
+    var url: URL? {
+        URL(string: self.rawValue)
+    }
+}
+
+let u = "https://api.openweathermap.org/data/2.5/forecast?lat=51.46&lon=55.06&appid=01fe6c1ac12469d4fc119476e3979bb7&units=metric&lang=ru"

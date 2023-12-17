@@ -4,9 +4,9 @@
 <dict>
 	<key>UIAppFonts</key>
 	<array>
-		<string>rubik-semi-bold.ttf</string>
 		<string>rubik-regular.ttf</string>
 		<string>rubik-medium.ttf</string>
+		<string>rubik-semi-bold.ttf</string>
 	</array>
 	<key>UIApplicationSceneManifest</key>
 	<dict>

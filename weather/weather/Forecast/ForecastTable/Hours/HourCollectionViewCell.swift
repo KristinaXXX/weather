@@ -14,7 +14,6 @@ class HourCollectionViewCell: UICollectionViewCell {
     private lazy var timeLabel: UILabel = {
         var view = UILabel()
         view.translatesAutoresizingMaskIntoConstraints = false
-        view.textColor = .black
         view.font = CustomFont.Regular14.font
         return view
     }()
@@ -22,7 +21,6 @@ class HourCollectionViewCell: UICollectionViewCell {
     private lazy var temperatureLabel: UILabel = {
         var view = UILabel()
         view.translatesAutoresizingMaskIntoConstraints = false
-        view.textColor = .systemGray2
         view.font = CustomFont.Regular16.font
         return view
     }()
@@ -53,7 +51,6 @@ class HourCollectionViewCell: UICollectionViewCell {
     
     private func tuneView() {
         contentView.clipsToBounds = true
-        contentView.backgroundColor = .white
         contentView.layer.cornerRadius = 22
         contentView.layer.borderWidth = 0.5
         contentView.layer.borderColor = UIColor(named: "BorderColor")?.cgColor
@@ -78,9 +75,39 @@ class HourCollectionViewCell: UICollectionViewCell {
         ])
     }
     
-    func update() {
-        timeLabel.text = "12:00"
-        temperatureLabel.text = "13"
-        weatherIcon.image = .sun
+    func update(forecastHour: ForecastWeatherRealm) {
+        
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateStyle = .none
+        dateFormatter.timeStyle = .short
+        dateFormatter.timeZone = .current
+        
+        timeLabel.text = dateFormatter.string(from: forecastHour.dateTimeForecast)
+        temperatureLabel.text = "\(Int(forecastHour.temp))º"
+        
+        switch forecastHour.mainWeather {
+        case "Clouds":
+            weatherIcon.image = .bigCloud
+        case "Rain":
+            weatherIcon.image = .precipitation
+        case "Snow":
+            weatherIcon.image = UIImage(systemName: "snowflake")?.imageWith(newSize: CGSize(width: 24, height: 24))
+        default:
+            weatherIcon.image = .sun
+        }
+        
+        let selectHour = Double(Calendar.current.component(.hour, from: forecastHour.dateTimeForecast))
+        let nowHour = Double(Calendar.current.component(.hour, from: Date()))
+        let range = selectHour - 1.5 ..< selectHour + 1.5
+        if range.contains(nowHour) {
+            contentView.backgroundColor = .accent
+            timeLabel.textColor = .white
+            temperatureLabel.textColor = .white
+        } else {
+            contentView.backgroundColor = .white
+            timeLabel.textColor = .black
+            temperatureLabel.textColor = .systemGray2
+        }
+        
     }
 }

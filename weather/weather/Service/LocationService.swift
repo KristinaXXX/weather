@@ -29,6 +29,11 @@ final class LocationService: NSObject {
         }
         manager.startUpdatingLocation()
     }
+    
+    func nowLocation() -> Coord? {
+        guard let lon = manager.location?.coordinate.longitude, let lat = manager.location?.coordinate.latitude else { return nil }
+        return Coord(lon: lon, lat: lat)
+    }
 }
 
 extension LocationService: CLLocationManagerDelegate {

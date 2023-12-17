@@ -137,12 +137,26 @@ class DayTableViewCell: UITableViewCell {
         ])
     }
     
-    func update() {
-        dateTimeLabel.text = "18/04"
-        precipitationLabel.text = "57%"
-        precipitationInfoLabel.text = "Местами дождь"
-        maxMinTempLabel.text = "4º-11º"
-        weatherIcon.image = .sun
+    func update(forecastDay: ForecastWeatherRealm) {
+        let dateFormatter = DateFormatter()
+        dateFormatter.timeZone = .current
+        dateFormatter.dateFormat = "dd/MM"
+        
+        dateTimeLabel.text = dateFormatter.string(from: forecastDay.dateTimeForecast)
+        precipitationLabel.text = "\(forecastDay.humidity)%"
+        precipitationInfoLabel.text = forecastDay.descriptionWeather?.uppercasedFirstLetter()
+        maxMinTempLabel.text = "\(Int(forecastDay.tempMin))º / \(Int(forecastDay.tempMax))º"
+        
+        switch forecastDay.mainWeather {
+        case "Clouds":
+            weatherIcon.image = .bigCloud
+        case "Rain":
+            weatherIcon.image = .precipitation
+        case "Snow":
+            weatherIcon.image = UIImage(systemName: "snowflake")?.imageWith(newSize: CGSize(width: 24, height: 24))
+        default:
+            weatherIcon.image = .sun
+        }
     }
     
     @objc

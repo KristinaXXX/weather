@@ -123,7 +123,6 @@ class WeatherNowHeaderView: UITableViewHeaderFooterView {
     
     override init(reuseIdentifier: String?) {
         super.init(reuseIdentifier: reuseIdentifier)
-       // backgroundColor = .accent
         setupView()
         addSubviews()
         setupConstraints()
@@ -137,16 +136,25 @@ class WeatherNowHeaderView: UITableViewHeaderFooterView {
         layer.cornerRadius = 5
     }
     
-    func update() {
-        maxMinTempLabel.text = "7 /13"
-        mainTempLabel.text = "13"
-        precipitationInfoLabel.text = "Возможен небольшой дождь"
-        sunriseTimeLabel.text = "05:41"
-        sunsetTimeLabel.text = "19:41"
-        dateTimeLabel.text = "17:48, пт 16 апреля"
-        partlyCloudySunLabel.text = "0"
-        windLeafLabel.text = "3 м/с"
-        precipitationLabel.text = "75%"
+    func update(_ currentWeather: CurrentWeatherRealm? = nil) {
+        guard let weather = currentWeather else { return }
+        
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateStyle = .none
+        dateFormatter.timeStyle = .short
+        
+        maxMinTempLabel.text = "\(Int(weather.tempMin))º / \(Int(weather.tempMax))º"
+        mainTempLabel.text = "\(Int(weather.temp))º"
+        precipitationInfoLabel.text = weather.descriptionWeather?.uppercasedFirstLetter() ?? ""
+        sunriseTimeLabel.text =  weather.sunrise == nil ? "-:-" : dateFormatter.string(from: weather.sunrise!)
+        sunsetTimeLabel.text = weather.sunset == nil ? "-:-" : dateFormatter.string(from: weather.sunset!)
+        partlyCloudySunLabel.text = "\(weather.clouds)%"
+        windLeafLabel.text = "\(Int(weather.windSpeed)) м/с"
+        precipitationLabel.text = "\(weather.humidity)%"
+        
+        dateFormatter.dateFormat = "HH:mm, dd MMMM"
+        dateFormatter.locale = .current
+        dateTimeLabel.text = dateFormatter.string(from: Date())
     }
     
     private func addSubviews() {
@@ -202,7 +210,7 @@ class WeatherNowHeaderView: UITableViewHeaderFooterView {
         ])
         
         NSLayoutConstraint.activate([
-            windLeafIcon.leadingAnchor.constraint(equalTo: mainTempLabel.leadingAnchor, constant: -16),
+            windLeafIcon.leadingAnchor.constraint(equalTo: partlyCloudySunLabel.trailingAnchor, constant: 19),
             windLeafIcon.centerYAnchor.constraint(equalTo: partlyCloudySunIcon.centerYAnchor),
             windLeafIcon.widthAnchor.constraint(equalToConstant: 25),
             windLeafIcon.heightAnchor.constraint(equalToConstant: 16)

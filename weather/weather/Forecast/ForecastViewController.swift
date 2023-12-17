@@ -7,16 +7,27 @@
 
 import UIKit
 
-class ForecastViewController: UIViewController {
+protocol ForecastViewControllerDelegate: AnyObject {
+    func updateHeader()
+    func updateForecast()
+}
 
+class ForecastViewController: UIViewController, ForecastViewControllerDelegate {
+    
     private let viewModel: ForecastViewModel
+    private lazy var refreshControl: UIRefreshControl = {
+        let refreshControl = UIRefreshControl()
+        refreshControl.attributedTitle = NSAttributedString(string: "Обновление...")
+        refreshControl.addTarget(self, action: #selector(refreshForecast(_:)), for: UIControl.Event.valueChanged)
+        return refreshControl
+    }()
     
     private lazy var menuBarButtonItem: UIBarButtonItem = {
-        return createTabButton(imageName: "burger", selector: #selector(menuTabButtonPressed(_:)))
+        return createTabButton(imageName: "text.justify.right", selector: #selector(menuTabButtonPressed(_:)))
     }()
     
     private lazy var locationBarButtonItem: UIBarButtonItem = {
-        return createTabButton(imageName: "location", selector: #selector(locationTabButtonPressed(_:)))
+        return createTabButton(imageName: "location.viewfinder", selector: #selector(locationTabButtonPressed(_:)))
     }()
 
     private lazy var forecastTableView: UITableView = {
@@ -31,6 +42,7 @@ class ForecastViewController: UIViewController {
         tableView.register(DaysHeaderFooterView.self, forHeaderFooterViewReuseIdentifier: DaysHeaderFooterView.id)
         tableView.separatorStyle = .none
         tableView.backgroundColor = .white
+        tableView.addSubview(refreshControl)
         
         return tableView
     }()
@@ -38,6 +50,7 @@ class ForecastViewController: UIViewController {
     init(viewModel: ForecastViewModel) {
         self.viewModel = viewModel
         super.init(nibName: nil, bundle: nil)
+        viewModel.forecastViewControllerDelegate = self
     }
     
     required init?(coder: NSCoder) {
@@ -50,6 +63,13 @@ class ForecastViewController: UIViewController {
         addSubviews()
         setupConstraints()
         tuneTableView()
+        updateData()
+    }
+    
+    private func updateData() {
+        viewModel.updateLocation()
+        viewModel.loadCurrentWeather()
+       // viewModel.loadForecast()
     }
     
     private func tuneTableView() {
@@ -68,7 +88,6 @@ class ForecastViewController: UIViewController {
     }
     
     func setupConstraints() {
-        
         let safeAreaLayoutGuide = view.safeAreaLayoutGuide
         NSLayoutConstraint.activate([
             forecastTableView.leadingAnchor.constraint(equalTo: safeAreaLayoutGuide.leadingAnchor),
@@ -79,15 +98,29 @@ class ForecastViewController: UIViewController {
     }
     
     @objc
+    func refreshForecast(_ sender: AnyObject) {
+        updateData()
+    }
+    
+    @objc
     private func menuTabButtonPressed(_ sender: UIButton) {
-        
     }
     
     @objc
     private func locationTabButtonPressed(_ sender: UIButton) {
-        
     }
-
+    
+    func updateHeader() {
+        let headerView = forecastTableView.headerView(forSection: 0) as! WeatherNowHeaderView
+        let currentWeather = viewModel.takeCurrentWeather()
+        headerView.update(currentWeather)
+        title = currentWeather?.coord?.cityName
+    }
+    
+    func updateForecast() {
+        forecastTableView.reloadData()
+        refreshControl.endRefreshing()
+    }
 }
 
 extension ForecastViewController: UITableViewDataSource {
@@ -95,11 +128,13 @@ extension ForecastViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         switch indexPath.section {
         case 0:
+            let forecastHours = viewModel.takeForecastHours()
             let cell = tableView.dequeueReusableCell(withIdentifier: HoursTableViewCell.id, for: indexPath) as! HoursTableViewCell
+            cell.update(forecastHours: forecastHours)
             return cell
         case 1:
             let cell = tableView.dequeueReusableCell(withIdentifier: DayTableViewCell.id, for: indexPath) as! DayTableViewCell
-            cell.update()
+            cell.update(forecastDay: viewModel.takeForecastDay(at: indexPath.row))
             return cell
         default:
             return UITableViewCell()
@@ -111,7 +146,7 @@ extension ForecastViewController: UITableViewDataSource {
         case 0:
             return 1
         case 1:
-            return 10
+            return viewModel.countForecastDays()
         default:
             return 0
         }
@@ -136,7 +171,8 @@ extension ForecastViewController: UITableViewDelegate {
         switch section {
         case 0:
             let headerView = tableView.dequeueReusableHeaderFooterView(withIdentifier: WeatherNowHeaderView.id) as! WeatherNowHeaderView
-            headerView.update()
+            let currentWeather = viewModel.takeCurrentWeather()
+            headerView.update(currentWeather)
             return headerView
         case 1:
             let headerView = tableView.dequeueReusableHeaderFooterView(withIdentifier: DaysHeaderFooterView.id) as! DaysHeaderFooterView
@@ -155,5 +191,4 @@ extension ForecastViewController: UITableViewDelegate {
             return
         }
     }
-    
 }

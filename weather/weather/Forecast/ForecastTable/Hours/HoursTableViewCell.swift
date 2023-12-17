@@ -10,6 +10,7 @@ import UIKit
 class HoursTableViewCell: UITableViewCell {
 
     static let id = "HoursTableViewCell"
+    private var dataForecastHours: [ForecastWeatherRealm] = []
     
     private lazy var hoursCollection: UICollectionView = {
         let viewLayout = UICollectionViewFlowLayout()
@@ -72,7 +73,7 @@ class HoursTableViewCell: UITableViewCell {
         hoursCollection.delegate = self
     }
     
-    func setupConstraints() {
+    private func setupConstraints() {
         NSLayoutConstraint.activate([
             info24Label.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 24),
             info24Label.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16)
@@ -84,6 +85,11 @@ class HoursTableViewCell: UITableViewCell {
             hoursCollection.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
             hoursCollection.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16)
         ])
+    }
+    
+    func update(forecastHours: [ForecastWeatherRealm]) {
+        dataForecastHours = forecastHours
+        hoursCollection.reloadData()
     }
     
     @objc
@@ -100,7 +106,9 @@ extension HoursTableViewCell: UICollectionViewDataSource {
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: HourCollectionViewCell.id, for: indexPath) as! HourCollectionViewCell
-        cell.update()
+        if dataForecastHours.count > indexPath.row {
+            cell.update(forecastHour: dataForecastHours[indexPath.row])
+        }
         return cell
     }
     

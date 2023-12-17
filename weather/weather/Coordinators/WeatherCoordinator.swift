@@ -8,10 +8,16 @@
 import UIKit
 
 protocol WeatherCoordinatorProtocol {
+    func weatherNowUpdated()
+    func showError(_ text: String)
 
 }
 
 final class WeatherCoordinator: WeatherCoordinatorProtocol {
+    func weatherNowUpdated() {
+        
+    }
+    
     
     private weak var navigationController: UINavigationController?
     
@@ -39,5 +45,11 @@ final class WeatherCoordinator: WeatherCoordinatorProtocol {
     private func showForecast() {
         let controller = Builder.buildForecastViewController(coordinator: self)
         navigationController?.pushViewController(controller, animated: true)
+    }
+    
+    func showError(_ text: String) {
+        let alert = UIAlertController(title: "Error", message: text, preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "OK", style: .default))
+        navigationController?.present(alert, animated: true, completion: nil)
     }
 }
