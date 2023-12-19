@@ -24,21 +24,21 @@ class LocationPermissionViewController: UIViewController {
     private lazy var permissionLabel: UILabel = {
         var view = UILabel()
         view.translatesAutoresizingMaskIntoConstraints = false
-        view.textColor = UIColor(red: 0.973, green: 0.961, blue: 0.961, alpha: 1)
+        view.textColor = .white
         view.font = CustomFont.SemiBold16.font
         view.numberOfLines = 0
         view.lineBreakMode = .byWordWrapping
         var paragraphStyle = NSMutableParagraphStyle()
         paragraphStyle.lineHeightMultiple = 1.11
         paragraphStyle.alignment = .center
-        view.attributedText = NSMutableAttributedString(string: "Разрешить приложению Weather использовать данные \nо местоположении вашего устройства ", attributes: [NSAttributedString.Key.kern: 0.16, NSAttributedString.Key.paragraphStyle: paragraphStyle])
+        view.attributedText = NSMutableAttributedString(string: "Разрешить приложению Weather использовать данные \nо местоположении вашего устройства", attributes: [NSAttributedString.Key.kern: 0.16, NSAttributedString.Key.paragraphStyle: paragraphStyle])
         return view
     }()
     
     private lazy var infoLabel: UILabel = {
         var view = UILabel()
         view.translatesAutoresizingMaskIntoConstraints = false
-        view.textColor = UIColor(red: 1, green: 1, blue: 1, alpha: 1)
+        view.textColor = .white
         view.font = CustomFont.Regular14.font
         view.numberOfLines = 0
         view.lineBreakMode = .byWordWrapping
@@ -52,7 +52,7 @@ class LocationPermissionViewController: UIViewController {
     private lazy var infoSecondLabel: UILabel = {
         var view = UILabel()
         view.translatesAutoresizingMaskIntoConstraints = false
-        view.textColor = UIColor(red: 1, green: 1, blue: 1, alpha: 1)
+        view.textColor = .white
         view.font = CustomFont.Regular14.font
         view.numberOfLines = 0
         view.lineBreakMode = .byWordWrapping

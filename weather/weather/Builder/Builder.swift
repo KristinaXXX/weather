@@ -21,9 +21,26 @@ final class Builder {
         return viewController
     }
     
-    static func buildForecastViewController(coordinator: WeatherCoordinatorProtocol) -> UIViewController {
-        let viewModel = ForecastViewModel(coordinator: coordinator)
+    static func buildForecastViewController(coordinator: WeatherCoordinatorProtocol, location: CoordRealm) -> UIViewController {
+        let viewModel = ForecastViewModel(coordinator: coordinator, location: location)
         let viewController = ForecastViewController(viewModel: viewModel)
+        return viewController
+    }
+    
+    static func buildMainViewController(coordinator: WeatherCoordinatorProtocol) -> UIViewController {
+        let viewModel = MainViewModel(coordinator: coordinator)
+        let viewController = MainViewController(viewModel: viewModel)
+        return viewController
+    }
+    
+    static func buildMapViewController(coordinator: WeatherCoordinatorProtocol) -> UIViewController {
+        let viewModel = MapViewModel(coordinator: coordinator)
+        let viewController = MapViewController(viewModel: viewModel)
+        return viewController
+    }
+    
+    static func buildAddLocationInfoViewController(coordinator: WeatherCoordinatorProtocol) -> UIViewController {
+        let viewController = AddLocationInfoViewController()
         return viewController
     }
 

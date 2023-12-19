@@ -105,8 +105,10 @@ final class DownloadSaveService {
         }
     }
     
-    private static func takeCoord(lat: Double, lon: Double, cityName: String? = nil) -> CoordRealm? {
+    static func takeCoord(lat: Double, lon: Double, cityName: String? = nil, userAdd: Bool = false) -> CoordRealm? {
+        
         guard let realm = try? RealmService.getRealm() else { return nil }
+        let cityName = cityName ?? ""
         
         let latt = lat.roundTwoChar()
         let lonn = lon.roundTwoChar()
@@ -115,7 +117,8 @@ final class DownloadSaveService {
             let coordRealm = CoordRealm()
             coordRealm.lat = latt
             coordRealm.lon = lonn
-            coordRealm.cityName = cityName ?? ""
+            coordRealm.cityName = cityName
+            coordRealm.userAdd = userAdd
             do {
                 try realm.write {
                     realm.add(coordRealm)
@@ -125,7 +128,18 @@ final class DownloadSaveService {
             }
             return coordRealm
         } else {
-            return coordsRealm[0]
+            let coordRealm = coordsRealm.first!
+            if coordRealm.cityName.isEmpty && !cityName.isEmpty {
+                do {
+                    try realm.write {
+                        coordRealm.cityName = cityName
+                        realm.add(coordRealm)
+                    }
+                } catch {
+                    print(error)
+                }
+            }
+            return coordRealm
         }
     }
     
@@ -134,6 +148,16 @@ final class DownloadSaveService {
         guard let coord = takeCoord(lat: coordinates.lat, lon: coordinates.lon) else { return nil }
         let currentsWeatherRealm = realm.objects(CurrentWeatherRealm.self).filter("coord == %@", coord)
         return currentsWeatherRealm.last
+    }
+    
+    static func takeLocations() -> [CoordRealm] {
+        guard let realm = try? RealmService.getRealm() else { return [] }
+        let coordsRealm = realm.objects(CoordRealm.self).filter("userAdd == %@", true)
+        var array: [CoordRealm] = []
+        for item in coordsRealm {
+            array.append(item)
+        }
+        return array
     }
     
     static func takeForecastHours(coordinates: Coord, date: Date = Date()) -> [ForecastWeatherRealm] {

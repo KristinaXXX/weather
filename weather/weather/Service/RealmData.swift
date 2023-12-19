@@ -27,6 +27,7 @@ class CoordRealm: Object {
     @Persisted var lon: Double
     @Persisted var lat: Double
     @Persisted var cityName: String
+    @Persisted var userAdd: Bool
 }
 
 class ForecastWeatherRealm: Object {

@@ -37,6 +37,11 @@
 		6145FCCC2B24F1080089C97A /* RealmService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6145FCCB2B24F1080089C97A /* RealmService.swift */; };
 		6145FCDF2B26E7490089C97A /* RealmData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6145FCDE2B26E7490089C97A /* RealmData.swift */; };
 		6145FCE12B26F6710089C97A /* DownloadSaveService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6145FCE02B26F6710089C97A /* DownloadSaveService.swift */; };
+		617B23B72B31440300197E93 /* MainViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 617B23B62B31440300197E93 /* MainViewController.swift */; };
+		617B23BA2B31449400197E93 /* MainViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 617B23B92B31449400197E93 /* MainViewModel.swift */; };
+		617B23BE2B3155B700197E93 /* MapViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 617B23BD2B3155B700197E93 /* MapViewController.swift */; };
+		617B23C02B31577B00197E93 /* MapViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 617B23BF2B31577B00197E93 /* MapViewModel.swift */; };
+		617B23C22B31980C00197E93 /* AddLocationInfoViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 617B23C12B31980C00197E93 /* AddLocationInfoViewController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -69,6 +74,11 @@
 		6145FCCB2B24F1080089C97A /* RealmService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RealmService.swift; sourceTree = "<group>"; };
 		6145FCDE2B26E7490089C97A /* RealmData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RealmData.swift; sourceTree = "<group>"; };
 		6145FCE02B26F6710089C97A /* DownloadSaveService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DownloadSaveService.swift; sourceTree = "<group>"; };
+		617B23B62B31440300197E93 /* MainViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainViewController.swift; sourceTree = "<group>"; };
+		617B23B92B31449400197E93 /* MainViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainViewModel.swift; sourceTree = "<group>"; };
+		617B23BD2B3155B700197E93 /* MapViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapViewController.swift; sourceTree = "<group>"; };
+		617B23BF2B31577B00197E93 /* MapViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapViewModel.swift; sourceTree = "<group>"; };
+		617B23C12B31980C00197E93 /* AddLocationInfoViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddLocationInfoViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -106,14 +116,15 @@
 			children = (
 				6145FCA82B218F230089C97A /* Coordinators */,
 				6145FC722B19A7C10089C97A /* Builder */,
-				6145FC5B2B19988E0089C97A /* AppDelegate.swift */,
-				6145FCB02B21AF7E0089C97A /* ExtensionUIViewController.swift */,
-				6145FC782B1B65B20089C97A /* Fonts */,
+				617B23B82B31447800197E93 /* Main */,
 				6145FC752B1B52770089C97A /* LocationPermission */,
-				6145FC5D2B19988E0089C97A /* SceneDelegate.swift */,
-				6145FC7D2B1C60A50089C97A /* CustomButton.swift */,
-				6145FCAB2B21946A0089C97A /* Service */,
 				6145FC812B1C71140089C97A /* Forecast */,
+				617B23BC2B3155AA00197E93 /* Map */,
+				6145FCAB2B21946A0089C97A /* Service */,
+				617B23BB2B31462700197E93 /* Extensions */,
+				6145FC782B1B65B20089C97A /* Fonts */,
+				6145FC5B2B19988E0089C97A /* AppDelegate.swift */,
+				6145FC5D2B19988E0089C97A /* SceneDelegate.swift */,
 				6145FC672B1998900089C97A /* Assets.xcassets */,
 				6145FCBF2B2464830089C97A /* Errors.swift */,
 				6145FC692B1998900089C97A /* LaunchScreen.storyboard */,
@@ -135,6 +146,7 @@
 			isa = PBXGroup;
 			children = (
 				6145FC762B1B52C90089C97A /* LocationPermissionViewController.swift */,
+				617B23C12B31980C00197E93 /* AddLocationInfoViewController.swift */,
 			);
 			path = LocationPermission;
 			sourceTree = "<group>";
@@ -153,8 +165,8 @@
 			isa = PBXGroup;
 			children = (
 				6145FC822B1C714E0089C97A /* ForecastViewController.swift */,
-				6145FCB22B22EC500089C97A /* ForecastTable */,
 				6145FCAE2B21ACD10089C97A /* ForecastViewModel.swift */,
+				6145FCB22B22EC500089C97A /* ForecastTable */,
 			);
 			path = Forecast;
 			sourceTree = "<group>";
@@ -206,6 +218,33 @@
 				6145FCBB2B2446470089C97A /* DaysHeaderFooterView.swift */,
 			);
 			path = Days;
+			sourceTree = "<group>";
+		};
+		617B23B82B31447800197E93 /* Main */ = {
+			isa = PBXGroup;
+			children = (
+				617B23B62B31440300197E93 /* MainViewController.swift */,
+				617B23B92B31449400197E93 /* MainViewModel.swift */,
+			);
+			path = Main;
+			sourceTree = "<group>";
+		};
+		617B23BB2B31462700197E93 /* Extensions */ = {
+			isa = PBXGroup;
+			children = (
+				6145FC7D2B1C60A50089C97A /* CustomButton.swift */,
+				6145FCB02B21AF7E0089C97A /* ExtensionUIViewController.swift */,
+			);
+			path = Extensions;
+			sourceTree = "<group>";
+		};
+		617B23BC2B3155AA00197E93 /* Map */ = {
+			isa = PBXGroup;
+			children = (
+				617B23BD2B3155B700197E93 /* MapViewController.swift */,
+				617B23BF2B31577B00197E93 /* MapViewModel.swift */,
+			);
+			path = Map;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -291,12 +330,15 @@
 			buildActionMask = 2147483647;
 			files = (
 				6145FCB42B22EC870089C97A /* HoursTableViewCell.swift in Sources */,
+				617B23B72B31440300197E93 /* MainViewController.swift in Sources */,
 				6145FCB12B21AF7E0089C97A /* ExtensionUIViewController.swift in Sources */,
+				617B23C22B31980C00197E93 /* AddLocationInfoViewController.swift in Sources */,
 				6145FC662B19988E0089C97A /* weather.xcdatamodeld in Sources */,
 				6145FC772B1B52C90089C97A /* LocationPermissionViewController.swift in Sources */,
 				6145FCDF2B26E7490089C97A /* RealmData.swift in Sources */,
 				6145FCB92B22F26A0089C97A /* HourCollectionViewCell.swift in Sources */,
 				6145FCBE2B2464520089C97A /* NetworkService.swift in Sources */,
+				617B23BE2B3155B700197E93 /* MapViewController.swift in Sources */,
 				6145FCB62B22ECBA0089C97A /* DayTableViewCell.swift in Sources */,
 				6145FC5C2B19988E0089C97A /* AppDelegate.swift in Sources */,
 				6145FC7E2B1C60A50089C97A /* CustomButton.swift in Sources */,
@@ -305,6 +347,7 @@
 				6145FCBC2B2446470089C97A /* DaysHeaderFooterView.swift in Sources */,
 				6145FCAD2B21948C0089C97A /* LocationService.swift in Sources */,
 				6145FC832B1C714E0089C97A /* ForecastViewController.swift in Sources */,
+				617B23C02B31577B00197E93 /* MapViewModel.swift in Sources */,
 				6145FC852B1C76D00089C97A /* WeatherNowHeaderView.swift in Sources */,
 				6145FCE12B26F6710089C97A /* DownloadSaveService.swift in Sources */,
 				6145FCAF2B21ACD10089C97A /* ForecastViewModel.swift in Sources */,
@@ -312,6 +355,7 @@
 				6145FCC02B2464830089C97A /* Errors.swift in Sources */,
 				6145FC742B19A7D90089C97A /* Builder.swift in Sources */,
 				6145FCCC2B24F1080089C97A /* RealmService.swift in Sources */,
+				617B23BA2B31449400197E93 /* MainViewModel.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

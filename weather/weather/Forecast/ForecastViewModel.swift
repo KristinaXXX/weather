@@ -11,17 +11,24 @@ final class ForecastViewModel {
     
     private let coordinator: WeatherCoordinatorProtocol
     weak var forecastViewControllerDelegate: ForecastViewControllerDelegate?
-    private var coordinates: Coord?
+    private let coordinates: Coord
+    private let location: CoordRealm
     private var forecastDays: [ForecastWeatherRealm] = []
     
-    init(coordinator: WeatherCoordinatorProtocol) {
+    init(coordinator: WeatherCoordinatorProtocol, location: CoordRealm) {
         self.coordinator = coordinator
-        updateLocation()
+        self.location = location
+        coordinates = Coord(lon: location.lon, lat: location.lat)
+        //updateLocation()
         updateForecastDays()
     }
     
+    func cityName() -> String {
+        location.cityName
+    }
+    
     func loadCurrentWeather() {
-        guard let coordinates = coordinates else { return }
+       // guard let coordinates = coordinates else { return }
         DownloadSaveService.loadSaveCurrentWeather(coordinates: coordinates) { [weak self] result in
             DispatchQueue.main.async {
                 switch result {
@@ -36,7 +43,7 @@ final class ForecastViewModel {
     }
     
     func loadForecast() {
-        guard let coordinates = coordinates else { return }
+       // guard let coordinates = coordinates else { return }
         DownloadSaveService.loadSaveForecast(coordinates: coordinates) { [weak self] result in
             DispatchQueue.main.async {
                 switch result {
@@ -51,17 +58,17 @@ final class ForecastViewModel {
     }
     
     func takeCurrentWeather() -> CurrentWeatherRealm? {
-        guard let coordinates = coordinates else { return nil }
+       //guard let coordinates = coordinates else { return nil }
         return DownloadSaveService.takeCurrentWeather(coordinates: coordinates)
     }
     
     func takeForecastHours() -> [ForecastWeatherRealm] {
-        guard let coordinates = coordinates else { return [] }
+       // guard let coordinates = coordinates else { return [] }
         return DownloadSaveService.takeForecastHours(coordinates: coordinates)
     }
     
     func updateForecastDays() {
-        guard let coordinates = coordinates else { return }
+       // guard let coordinates = coordinates else { return }
         forecastDays = DownloadSaveService.takeForecastDays(coordinates: coordinates)
     }
     
@@ -73,7 +80,7 @@ final class ForecastViewModel {
         return forecastDays[index]
     }
     
-    func updateLocation() {
-        coordinates = LocationService.shared.nowLocation()
-    }
+//    func updateLocation() {
+//        coordinates = LocationService.shared.nowLocation()
+//    }
 }

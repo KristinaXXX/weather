@@ -30,9 +30,10 @@ final class LocationService: NSObject {
         manager.startUpdatingLocation()
     }
     
-    func nowLocation() -> Coord? {
+    func nowLocation() -> CoordRealm? {
         guard let lon = manager.location?.coordinate.longitude, let lat = manager.location?.coordinate.latitude else { return nil }
-        return Coord(lon: lon, lat: lat)
+        return DownloadSaveService.takeCoord(lat: lat, lon: lon)
+        //return Coord(lon: lon, lat: lat)
     }
 }
 

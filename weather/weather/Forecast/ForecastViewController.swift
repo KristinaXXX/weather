@@ -15,19 +15,13 @@ protocol ForecastViewControllerDelegate: AnyObject {
 class ForecastViewController: UIViewController, ForecastViewControllerDelegate {
     
     private let viewModel: ForecastViewModel
+    let cityName: String
+    
     private lazy var refreshControl: UIRefreshControl = {
         let refreshControl = UIRefreshControl()
         refreshControl.attributedTitle = NSAttributedString(string: "Обновление...")
         refreshControl.addTarget(self, action: #selector(refreshForecast(_:)), for: UIControl.Event.valueChanged)
         return refreshControl
-    }()
-    
-    private lazy var menuBarButtonItem: UIBarButtonItem = {
-        return createTabButton(imageName: "text.justify.right", selector: #selector(menuTabButtonPressed(_:)))
-    }()
-    
-    private lazy var locationBarButtonItem: UIBarButtonItem = {
-        return createTabButton(imageName: "location.viewfinder", selector: #selector(locationTabButtonPressed(_:)))
     }()
 
     private lazy var forecastTableView: UITableView = {
@@ -49,6 +43,7 @@ class ForecastViewController: UIViewController, ForecastViewControllerDelegate {
     
     init(viewModel: ForecastViewModel) {
         self.viewModel = viewModel
+        cityName = viewModel.cityName()
         super.init(nibName: nil, bundle: nil)
         viewModel.forecastViewControllerDelegate = self
     }
@@ -67,7 +62,7 @@ class ForecastViewController: UIViewController, ForecastViewControllerDelegate {
     }
     
     private func updateData() {
-        viewModel.updateLocation()
+        //viewModel.updateLocation()
         viewModel.loadCurrentWeather()
        // viewModel.loadForecast()
     }
@@ -79,8 +74,6 @@ class ForecastViewController: UIViewController, ForecastViewControllerDelegate {
     
     private func setupView() {
         view.backgroundColor = .white
-        navigationItem.leftBarButtonItems = [menuBarButtonItem]
-        navigationItem.rightBarButtonItems = [locationBarButtonItem]
     }
     
     func addSubviews() {
@@ -102,19 +95,10 @@ class ForecastViewController: UIViewController, ForecastViewControllerDelegate {
         updateData()
     }
     
-    @objc
-    private func menuTabButtonPressed(_ sender: UIButton) {
-    }
-    
-    @objc
-    private func locationTabButtonPressed(_ sender: UIButton) {
-    }
-    
     func updateHeader() {
-        let headerView = forecastTableView.headerView(forSection: 0) as! WeatherNowHeaderView
+        guard let headerView = forecastTableView.headerView(forSection: 0) as? WeatherNowHeaderView else { return }
         let currentWeather = viewModel.takeCurrentWeather()
         headerView.update(currentWeather)
-        title = currentWeather?.coord?.cityName
     }
     
     func updateForecast() {

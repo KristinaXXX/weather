@@ -21,7 +21,7 @@ class RealmService {
     }
     
     public static func getRealm() throws -> Realm {
-        let configuration = Realm.Configuration(schemaVersion: 3)
+        let configuration = Realm.Configuration(schemaVersion: 4)
         guard let realm = try? Realm(configuration: configuration) else {
             print("RealmError.configurationError")
             throw RealmError.configurationError
