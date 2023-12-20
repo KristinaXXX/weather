@@ -13,13 +13,13 @@ class AddLocationInfoViewController: UIViewController {
         var view = UILabel()
         view.translatesAutoresizingMaskIntoConstraints = false
         view.textColor = .black
-        view.font = CustomFont.SemiBold16.font
+        view.font = CustomFont.Regular14.font
         view.numberOfLines = 0
         view.lineBreakMode = .byWordWrapping
         var paragraphStyle = NSMutableParagraphStyle()
         paragraphStyle.lineHeightMultiple = 1.11
         paragraphStyle.alignment = .center
-        view.attributedText = NSMutableAttributedString(string: "Чтобы добавить локацию вручную \nнажмите на правую кнопку \nвверху экрана", attributes: [NSAttributedString.Key.kern: 0.16, NSAttributedString.Key.paragraphStyle: paragraphStyle])
+        view.attributedText = NSMutableAttributedString(string: "Чтобы добавить локацию вручную \nнажмите на правую кнопку \nв верхей части экрана", attributes: [NSAttributedString.Key.kern: 0.16, NSAttributedString.Key.paragraphStyle: paragraphStyle])
         return view
     }()
     

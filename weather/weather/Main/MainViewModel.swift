@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import UIKit
 
 protocol MainViewModelDelegate: AnyObject {
     func updatePages()
@@ -34,7 +35,7 @@ class MainViewModel {
         return locations[index]
     }
     
-    func createPages() -> [ForecastViewController] {
+    func createPages() -> [UIViewController] {
         coordinator.createForecasts(locations: locations)
     }
     

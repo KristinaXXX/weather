@@ -49,13 +49,13 @@ class MapViewController: UIViewController {
     }
     
     private func setupMap() {
-        manager.delegate = self
+        //manager.delegate = self
         
         if manager.authorizationStatus == .notDetermined {
             manager.requestWhenInUseAuthorization()
         }
         manager.startUpdatingLocation()
-        mapView.delegate = self
+        //mapView.delegate = self
     }
     
     private func setupView() {
@@ -105,23 +105,23 @@ class MapViewController: UIViewController {
     }
 }
 
-extension MapViewController: CLLocationManagerDelegate {
-    func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
-        guard let coordinates = locations.first else { return }
-        nowCoordinate = CLLocationCoordinate2D(latitude: coordinates.coordinate.latitude, longitude: coordinates.coordinate.longitude)
-    }
-}
-
-extension MapViewController: MKMapViewDelegate {
-    
-    func mapView(_ mapView: MKMapView, didSelect view: MKAnnotationView) {
-        //trackButton.isHidden = false
-    }
-    
-    func mapView(_ mapView: MKMapView, rendererFor overlay: MKOverlay) -> MKOverlayRenderer {
-        let renderer = MKPolylineRenderer(overlay: overlay)
-        renderer.strokeColor = .tintColor
-        renderer.lineWidth = 4.0
-        return renderer
-    }
-}
+//extension MapViewController: CLLocationManagerDelegate {
+//    func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
+//        guard let coordinates = locations.first else { return }
+//        nowCoordinate = CLLocationCoordinate2D(latitude: coordinates.coordinate.latitude, longitude: coordinates.coordinate.longitude)
+//    }
+//}
+//
+//extension MapViewController: MKMapViewDelegate {
+//    
+//    func mapView(_ mapView: MKMapView, didSelect view: MKAnnotationView) {
+//        //trackButton.isHidden = false
+//    }
+//    
+//    func mapView(_ mapView: MKMapView, rendererFor overlay: MKOverlay) -> MKOverlayRenderer {
+//        let renderer = MKPolylineRenderer(overlay: overlay)
+//        renderer.strokeColor = .tintColor
+//        renderer.lineWidth = 4.0
+//        return renderer
+//    }
+//}

@@ -11,7 +11,7 @@ protocol WeatherCoordinatorProtocol {
     var mainViewModelDelegate: MainViewModelDelegate? { get set }
     func weatherNowUpdated()
     func showError(_ text: String)
-    func createForecasts(locations: [CoordRealm]) -> [ForecastViewController]
+    func createForecasts(locations: [CoordRealm]) -> [UIViewController]
     func addLocationRequest(cityName: String, completion: @escaping ((_:UIAlertAction) -> Void))
     func showMap()
     func closeTopViewController()
@@ -49,8 +49,8 @@ final class WeatherCoordinator: WeatherCoordinatorProtocol {
         navigationController?.pushViewController(controller, animated: true)
     }
     
-    func createForecasts(locations: [CoordRealm]) -> [ForecastViewController] {
-        var result: [ForecastViewController] = []
+    func createForecasts(locations: [CoordRealm]) -> [UIViewController] {
+        var result: [UIViewController] = []
         for item in locations {
             let controller = Builder.buildForecastViewController(coordinator: self, location: item)
             guard let forecastViewController = controller as? ForecastViewController else { continue }
@@ -59,7 +59,7 @@ final class WeatherCoordinator: WeatherCoordinatorProtocol {
         
         if result.isEmpty {
             let controller = Builder.buildAddLocationInfoViewController(coordinator: self)
-            //result.append(controller)
+            result.append(controller)
         }
         return result
     }

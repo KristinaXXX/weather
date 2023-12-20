@@ -13,7 +13,7 @@ protocol MainViewControllerDelegate: AnyObject {
 
 class MainViewController: UIPageViewController {
 
-    private var pages: [ForecastViewController] = []
+    private var pages: [UIViewController] = []
     private let viewModel: MainViewModel
    
     private lazy var menuBarButtonItem: UIBarButtonItem = {
@@ -36,20 +36,27 @@ class MainViewController: UIPageViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        setupView()
+        setupPages()
+    }
+    
+    private func setupView() {
         navigationItem.leftBarButtonItems = [menuBarButtonItem]
         navigationItem.rightBarButtonItems = [locationBarButtonItem]
-        setupPages()
+        self.dataSource = self
+        self.delegate = self
+        view.backgroundColor = .white
     }
     
     private func setupPages() {
         pages = viewModel.createPages()
         if let firstPage = pages.first {
             setViewControllers([firstPage], direction: .forward, animated: true, completion: nil)
-            title = firstPage.cityName
+            if let forecastViewController = firstPage as? ForecastViewController {
+                title = forecastViewController.cityName
+            }
         }
-        self.dataSource = self
-        self.delegate = self
-        view.backgroundColor = .white
+        reloadInputViews()
     }
     
     @objc
@@ -68,7 +75,6 @@ extension MainViewController: UIPageViewControllerDataSource {
         guard pages.first != viewController else { return nil }
         guard let forecastViewController = viewController as? ForecastViewController, let currentIndex = pages.firstIndex(of: forecastViewController) else { return nil }
         let page = pages[currentIndex - 1]
-        title = page.cityName
         return page
     }
     
@@ -84,12 +90,17 @@ extension MainViewController: UIPageViewControllerDelegate {
     func pageViewController(_ pageViewController: UIPageViewController, didFinishAnimating finished: Bool, previousViewControllers: [UIViewController], transitionCompleted completed: Bool) {
         guard !completed else { return }
         guard let forecastViewController = previousViewControllers.first as? ForecastViewController, let currentIndex = pages.firstIndex(of: forecastViewController) else { return }
-        title = pages[currentIndex].cityName
+        
+        if let nextForecastViewController = pages[currentIndex] as? ForecastViewController {
+            title = nextForecastViewController.cityName
+        }
     }
     
     func pageViewController(_ pageViewController: UIPageViewController, willTransitionTo pendingViewControllers: [UIViewController]) {
         guard let forecastViewController = pendingViewControllers.first as? ForecastViewController, let currentIndex = pages.firstIndex(of: forecastViewController) else { return }
-        title = pages[currentIndex].cityName
+        if let nextForecastViewController = pages[currentIndex] as? ForecastViewController {
+            title = nextForecastViewController.cityName
+        }
     }
 }
 
