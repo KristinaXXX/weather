@@ -9,13 +9,17 @@ import UIKit
 
 protocol WeatherCoordinatorProtocol {
     var mainViewModelDelegate: MainViewModelDelegate? { get set }
+    
     func weatherNowUpdated()
     func showError(_ text: String)
     func createForecasts(locations: [CoordRealm]) -> [UIViewController]
+    func createForecastsDays(location: CoordRealm, days: [Date]) -> [DailyForecastViewController]
     func addLocationRequest(cityName: String, completion: @escaping ((_:UIAlertAction) -> Void))
     func showMap()
     func closeTopViewController()
     func updatePages()
+    func showDetails(location: CoordRealm)
+    func showDailyPages(location: CoordRealm, selectedDay: Date)
 }
 
 final class WeatherCoordinator: WeatherCoordinatorProtocol {
@@ -64,6 +68,16 @@ final class WeatherCoordinator: WeatherCoordinatorProtocol {
         return result
     }
     
+    func createForecastsDays(location: CoordRealm, days: [Date]) -> [DailyForecastViewController] {
+        var result: [DailyForecastViewController] = []
+        for item in days {
+            let controller = Builder.buildDailyForecastViewController(coordinator: self, location: location, date: item)
+            guard let dailyForecastViewController = controller as? DailyForecastViewController else { continue }
+            result.append(dailyForecastViewController)
+        }
+        return result
+    }
+    
     func showError(_ text: String) {
         let alert = UIAlertController(title: "Error", message: text, preferredStyle: .alert)
         alert.addAction(UIAlertAction(title: "OK", style: .default))
@@ -92,5 +106,15 @@ final class WeatherCoordinator: WeatherCoordinatorProtocol {
     
     func weatherNowUpdated() {
         
+    }
+    
+    func showDetails(location: CoordRealm) {
+        let controller = Builder.buildDetailsViewController(coordinator: self, location: location)
+        navigationController?.pushViewController(controller, animated: true)
+    }
+    
+    func showDailyPages(location: CoordRealm, selectedDay: Date) {
+        let controller = Builder.buildDailyPagesViewController(coordinator: self, location: location, selectedDay: selectedDay)
+        navigationController?.pushViewController(controller, animated: true)
     }
 }

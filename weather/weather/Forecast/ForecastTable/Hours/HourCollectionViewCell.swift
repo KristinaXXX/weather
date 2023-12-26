@@ -10,6 +10,7 @@ import UIKit
 class HourCollectionViewCell: UICollectionViewCell {
     
     static let id = "HourCollectionViewCell"
+    weak var hoursTableViewCellDelegate: HoursTableViewCellDelegate?
     
     private lazy var timeLabel: UILabel = {
         var view = UILabel()
@@ -54,6 +55,8 @@ class HourCollectionViewCell: UICollectionViewCell {
         contentView.layer.cornerRadius = 22
         contentView.layer.borderWidth = 0.5
         contentView.layer.borderColor = UIColor(named: "BorderColor")?.cgColor
+        let tapView = UITapGestureRecognizer(target: self, action: #selector(didTapView))
+        contentView.addGestureRecognizer(tapView)
     }
     
     func setupConstraints() {
@@ -77,10 +80,11 @@ class HourCollectionViewCell: UICollectionViewCell {
     
     func update(forecastHour: ForecastWeatherRealm) {
         
+        let timezone = forecastHour.coord?.timezone ?? 0
         let dateFormatter = DateFormatter()
         dateFormatter.dateStyle = .none
         dateFormatter.timeStyle = .short
-        dateFormatter.timeZone = .current
+        dateFormatter.timeZone = TimeZone(secondsFromGMT: timezone)
         
         timeLabel.text = dateFormatter.string(from: forecastHour.dateTimeForecast)
         temperatureLabel.text = "\(Int(forecastHour.temp))º"
@@ -96,8 +100,8 @@ class HourCollectionViewCell: UICollectionViewCell {
             weatherIcon.image = .sun
         }
         
-        let selectHour = Double(Calendar.current.component(.hour, from: forecastHour.dateTimeForecast))
-        let nowHour = Double(Calendar.current.component(.hour, from: Date()))
+        let selectHour = Double(forecastHour.dateTimeForecast.hourInTimeZone(timezone))
+        let nowHour = Double(Date().hourInTimeZone(timezone))
         let range = selectHour - 1.5 ..< selectHour + 1.5
         if range.contains(nowHour) {
             contentView.backgroundColor = .accent
@@ -108,6 +112,16 @@ class HourCollectionViewCell: UICollectionViewCell {
             timeLabel.textColor = .black
             temperatureLabel.textColor = .systemGray2
         }
-        
+    }
+    
+    @objc
+    private func didTapView() {
+        hoursTableViewCellDelegate?.showDetails()
+    }
+}
+
+extension HourCollectionViewCell: UICollectionViewDelegate {
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        hoursTableViewCellDelegate?.showDetails()
     }
 }

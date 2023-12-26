@@ -37,7 +37,7 @@ final class DownloadSaveService {
     private static func createForecast(forecastResponse: ForecastResponse) {
         guard let realm = try? RealmService.getRealm() else { return }
         guard let city = forecastResponse.city, let coord = city.coord else { return }
-        guard let coordRealm = takeCoord(lat: coord.lat, lon: coord.lon, cityName: city.name) else { return }
+        guard let coordRealm = takeCoord(lat: coord.lat, lon: coord.lon, cityName: city.name, timezone: city.timezone) else { return }
         
         let createdAt = Date()
         
@@ -54,6 +54,7 @@ final class DownloadSaveService {
             forecastWeatherRealm.temp = itemList.main.temp ?? 0
             forecastWeatherRealm.clouds = itemList.clouds.all ?? 0
             forecastWeatherRealm.humidity = itemList.main.humidity ?? 0
+            forecastWeatherRealm.pop = Int(itemList.pop ?? 0 * 100)
             forecastWeatherRealm.windSpeed = itemList.wind.speed ?? 0
             forecastWeatherRealm.windDeg = itemList.wind.deg ?? 0
             forecastWeatherRealm.tempMin = itemList.main.tempMin ?? 0
@@ -66,6 +67,7 @@ final class DownloadSaveService {
                 try realm.write {
                     realm.add(forecastWeatherRealm)
                 }
+                deleteForecastWeather(to: createdAt, coord: coordRealm)
             } catch {
                 print(error)
             }
@@ -76,10 +78,12 @@ final class DownloadSaveService {
         guard let realm = try? RealmService.getRealm() else { return }
         guard let coord = currentWeatherResponse.coord else { return }
         
-        guard let coordRealm = takeCoord(lat: coord.lat, lon: coord.lon, cityName: currentWeatherResponse.name) else { return }
+        guard let coordRealm = takeCoord(lat: coord.lat, lon: coord.lon, cityName: currentWeatherResponse.name, timezone: currentWeatherResponse.timezone) else { return }
         
         let currentWeatherRealm = CurrentWeatherRealm()
-        currentWeatherRealm.createdAt = Date()
+        let createdAt = Date()
+        
+        currentWeatherRealm.createdAt = createdAt
         currentWeatherRealm.coord = coordRealm
         currentWeatherRealm.temp = currentWeatherResponse.main.temp ?? 0
         currentWeatherRealm.clouds = currentWeatherResponse.clouds.all ?? 0
@@ -100,15 +104,17 @@ final class DownloadSaveService {
             try realm.write {
                 realm.add(currentWeatherRealm)
             }
+            deleteCurrentWeather(to: createdAt, coord: coordRealm)
         } catch {
             print(error)
         }
     }
     
-    static func takeCoord(lat: Double, lon: Double, cityName: String? = nil, userAdd: Bool = false) -> CoordRealm? {
+    static func takeCoord(lat: Double, lon: Double, cityName: String? = nil, userAdd: Bool = false, timezone: Int? = nil) -> CoordRealm? {
         
         guard let realm = try? RealmService.getRealm() else { return nil }
         let cityName = cityName ?? ""
+        let timezone = timezone ?? 0
         
         let latt = lat.roundTwoChar()
         let lonn = lon.roundTwoChar()
@@ -119,6 +125,7 @@ final class DownloadSaveService {
             coordRealm.lon = lonn
             coordRealm.cityName = cityName
             coordRealm.userAdd = userAdd
+            coordRealm.timezone = timezone
             do {
                 try realm.write {
                     realm.add(coordRealm)
@@ -129,10 +136,11 @@ final class DownloadSaveService {
             return coordRealm
         } else {
             let coordRealm = coordsRealm.first!
-            if coordRealm.cityName.isEmpty && !cityName.isEmpty {
+            if (coordRealm.cityName.isEmpty && !cityName.isEmpty) || (coordRealm.timezone == 0 && timezone != 0) {
                 do {
                     try realm.write {
                         coordRealm.cityName = cityName
+                        coordRealm.timezone = timezone
                         realm.add(coordRealm)
                     }
                 } catch {
@@ -160,14 +168,11 @@ final class DownloadSaveService {
         return array
     }
     
-    static func takeForecastHours(coordinates: Coord, date: Date = Date()) -> [ForecastWeatherRealm] {
+    static func takeForecastHours(coord: CoordRealm, date: Date = Date()) -> [ForecastWeatherRealm] {
         guard let realm = try? RealmService.getRealm() else { return [] }
-        guard let coord = takeCoord(lat: coordinates.lat, lon: coordinates.lon) else { return [] }
-        
         guard let lastForecastWeatherRealm = realm.objects(ForecastWeatherRealm.self).last else { return [] }
-        let dateFrom = date - TimeInterval(144000) //4 hours
         let dateTo = date + TimeInterval(86400) //12 hours
-        let forecastWeatherRealm = realm.objects(ForecastWeatherRealm.self).filter("coord == %coord AND createdAt == %cratedAt AND dateTimeForecast > %dateFrom AND dateTimeForecast < %dateTo", coord, lastForecastWeatherRealm.createdAt, dateFrom, dateTo)
+        let forecastWeatherRealm = realm.objects(ForecastWeatherRealm.self).filter("coord == %coord AND createdAt == %cratedAt AND dateTimeForecast < %dateTo", coord, lastForecastWeatherRealm.createdAt, dateTo)
         
         var array: [ForecastWeatherRealm] = []
         for item in forecastWeatherRealm {
@@ -176,9 +181,8 @@ final class DownloadSaveService {
         return array
     }
     
-    static func takeForecastDays(coordinates: Coord, date: Date = Date()) -> [ForecastWeatherRealm] {
+    static func takeForecastDays(coord: CoordRealm, date: Date = Date()) -> [ForecastWeatherRealm] {
         guard let realm = try? RealmService.getRealm() else { return [] }
-        guard let coord = takeCoord(lat: coordinates.lat, lon: coordinates.lon) else { return [] }
         guard let lastForecastWeatherRealm = realm.objects(ForecastWeatherRealm.self).last else { return [] }
         
         let dateFrom = Calendar.current.startOfDay(for: date)
@@ -186,10 +190,63 @@ final class DownloadSaveService {
         
         var array: [ForecastWeatherRealm] = []
         for item in forecastWeatherRealm {
-            if Calendar.current.component(.hour, from: item.dateTimeForecast) >= 12 && Calendar.current.component(.hour, from: item.dateTimeForecast) < 15 {
+            let hourInTimeZone = item.dateTimeForecast.hourInTimeZone(coord.timezone)
+            if hourInTimeZone >= 12 && hourInTimeZone < 15 {
                 array.append(item)
             }
         }
         return array
+    }
+    
+    static func takeForecastDayNight(coord: CoordRealm, date: Date) -> [ForecastWeatherRealm] {
+        guard let realm = try? RealmService.getRealm() else { return [] }
+        guard let lastForecastWeatherRealm = realm.objects(ForecastWeatherRealm.self).last else { return [] }
+        
+        let forecastWeatherRealm = realm.objects(ForecastWeatherRealm.self).filter("coord == %coord AND createdAt == %cratedAt AND dateTimeForecast >= %dateFrom AND dateTimeForecast < %dateTo", coord, lastForecastWeatherRealm.createdAt, date.startOfDay(coord.timezone), date.endOfDay(coord.timezone))
+        
+        var array: [ForecastWeatherRealm] = []
+        for item in forecastWeatherRealm {
+            let hourInTimeZone = item.dateTimeForecast.hourInTimeZone(coord.timezone)
+            if hourInTimeZone >= 12 && hourInTimeZone < 15 {
+                array.append(item)
+            } else if hourInTimeZone >= 0 && hourInTimeZone < 3 {
+                array.append(item)
+            }
+        }
+        return array
+    }
+    
+    static func takeForecastDates(coord: CoordRealm) -> [Date] {
+        let forecastDates = takeForecastDays(coord: coord)
+        guard !forecastDates.isEmpty else { return [] }
+        var resultDays: [Date] = []
+        for item in forecastDates {
+            resultDays.append(item.dateTimeForecast.startOfDay(coord.timezone))
+        }
+        return resultDays
+    }
+    
+    private static func deleteCurrentWeather(to date: Date, coord: CoordRealm) {
+        guard let realm = try? RealmService.getRealm() else { return }
+        do {
+            try realm.write {
+                let currentsWeatherRealm = realm.objects(CurrentWeatherRealm.self).filter("coord == %coord AND createdAt < %date", coord, date)
+                realm.delete(currentsWeatherRealm)
+            }
+        } catch {
+            print(error)
+        }
+    }
+    
+    private static func deleteForecastWeather(to date: Date, coord: CoordRealm) {
+        guard let realm = try? RealmService.getRealm() else { return }
+        do {
+            try realm.write {
+                let forecastsWeatherRealm = realm.objects(ForecastWeatherRealm.self).filter("coord == %coord AND createdAt < %date", coord, date)
+                realm.delete(forecastsWeatherRealm)
+            }
+        } catch {
+            print(error)
+        }
     }
 }

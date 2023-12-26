@@ -42,6 +42,7 @@ enum CustomFont {
     case Regular14
     case Regular16
     case Regular18
+    case Regular30
     case SemiBold16
     case Medium12
     case Medium14
@@ -68,6 +69,8 @@ enum CustomFont {
             UIFont(name: "Rubik-Medium", size: 12)
         case .Regular18:
             UIFont(name: "Rubik-Medium", size: 18)
+        case .Regular30:
+            UIFont(name: "Rubik-Medium", size: 30)
         }
     }
 }

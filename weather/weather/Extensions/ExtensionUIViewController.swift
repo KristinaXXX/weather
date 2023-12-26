@@ -47,3 +47,44 @@ extension Double {
         return (self * 100).rounded() / 100
     }
 }
+
+extension Date {
+//    var startOfDay: Date {
+//        Calendar.current.startOfDay(for: self)
+//    }
+    
+    func startOfDay(_ timezone: Int) -> Date {
+        var calendar = Calendar(identifier: .gregorian)
+        calendar.timeZone = TimeZone(secondsFromGMT: timezone)!
+        return calendar.startOfDay(for: self)
+    }
+    
+    func endOfDay(_ timezone: Int) -> Date {
+        var calendar = Calendar(identifier: .gregorian)
+        calendar.timeZone = TimeZone(secondsFromGMT: timezone)!
+        var components = DateComponents()
+        components.day = 1
+        components.second = -1
+        return calendar.date(byAdding: components, to: startOfDay(timezone))!
+    }
+    
+//    var endOfDay: Date {
+//        var components = DateComponents()
+//        components.day = 1
+//        components.second = -1
+//        return Calendar.current.date(byAdding: components, to: startOfDay)!
+//    }
+    
+//    var hour: Int {
+//        Calendar.current.component(.hour, from: self)
+//    }
+    
+    func hourInTimeZone(_ timezone: Int) -> Int {
+        var calendar = Calendar(identifier: .gregorian)
+        //print(TimeZone(secondsFromGMT: timezone)!)
+        calendar.timeZone = TimeZone(secondsFromGMT: timezone)!
+        //print( calendar.timeZone)
+        let dateWithTimezone = self //+ TimeInterval(timezone)
+        return calendar.component(.hour, from: dateWithTimezone)
+    }
+}

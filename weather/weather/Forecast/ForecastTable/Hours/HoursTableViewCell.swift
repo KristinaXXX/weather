@@ -7,10 +7,15 @@
 
 import UIKit
 
-class HoursTableViewCell: UITableViewCell {
+protocol HoursTableViewCellDelegate: AnyObject {
+    func showDetails()
+}
+
+class HoursTableViewCell: UITableViewCell, HoursTableViewCellDelegate {
 
     static let id = "HoursTableViewCell"
     private var dataForecastHours: [ForecastWeatherRealm] = []
+    weak var forecastViewControllerDelegate: ForecastViewControllerDelegate?
     
     private lazy var hoursCollection: UICollectionView = {
         let viewLayout = UICollectionViewFlowLayout()
@@ -21,7 +26,7 @@ class HoursTableViewCell: UITableViewCell {
         collectionView.backgroundColor = .white
        
         collectionView.register(HourCollectionViewCell.self, forCellWithReuseIdentifier: HourCollectionViewCell.id)
-        collectionView.isUserInteractionEnabled = true
+        //collectionView.isUserInteractionEnabled = true
         collectionView.showsHorizontalScrollIndicator = false
         
         return collectionView
@@ -94,7 +99,11 @@ class HoursTableViewCell: UITableViewCell {
     
     @objc
     private func tapInfo24Label() {
-        print("tapInfo24Label")
+        forecastViewControllerDelegate?.showDetails()
+    }
+    
+    func showDetails() {
+        forecastViewControllerDelegate?.showDetails()
     }
 
 }
@@ -107,6 +116,7 @@ extension HoursTableViewCell: UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: HourCollectionViewCell.id, for: indexPath) as! HourCollectionViewCell
         if dataForecastHours.count > indexPath.row {
+            cell.hoursTableViewCellDelegate = self
             cell.update(forecastHour: dataForecastHours[indexPath.row])
         }
         return cell
@@ -122,9 +132,7 @@ extension HoursTableViewCell: UICollectionViewDelegate {
 extension HoursTableViewCell: UICollectionViewDelegateFlowLayout {
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        //let width = collectionView.frame.width - 16*2
        CGSize(width: 42, height: 84)
-       
     }
 
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
@@ -137,16 +145,5 @@ extension HoursTableViewCell: UICollectionViewDelegateFlowLayout {
     }
 
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat { 16 }
-    
-//    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-//        switch indexPath.section {
-//        case 1:
-//            collectionView.deselectItem(at: indexPath, animated: true)
-//            let habitRow = HabitsStore.shared.habits[indexPath.row]
-//            navigationController?.pushViewController(HabitDetailsViewController(habit: habitRow), animated: true)
-//        default:
-//            return
-//        }
-//    }
     
 }

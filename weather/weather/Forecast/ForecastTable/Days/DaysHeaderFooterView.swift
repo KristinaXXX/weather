@@ -58,8 +58,4 @@ class DaysHeaderFooterView: UITableViewHeaderFooterView {
             countDaysLabel.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -16)
         ])
     }
-    
-
-    
-
 }

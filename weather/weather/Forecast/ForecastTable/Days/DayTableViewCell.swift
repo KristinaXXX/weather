@@ -139,13 +139,13 @@ class DayTableViewCell: UITableViewCell {
     
     func update(forecastDay: ForecastWeatherRealm) {
         let dateFormatter = DateFormatter()
-        dateFormatter.timeZone = .current
+        dateFormatter.timeZone = TimeZone(secondsFromGMT: forecastDay.coord?.timezone ?? 0)
         dateFormatter.dateFormat = "dd/MM"
         
         dateTimeLabel.text = dateFormatter.string(from: forecastDay.dateTimeForecast)
-        precipitationLabel.text = "\(forecastDay.humidity)%"
+        precipitationLabel.text = "\(forecastDay.pop)%"
         precipitationInfoLabel.text = forecastDay.descriptionWeather?.uppercasedFirstLetter()
-        maxMinTempLabel.text = "\(Int(forecastDay.tempMin))º / \(Int(forecastDay.tempMax))º"
+        maxMinTempLabel.text = "\(Int(forecastDay.tempMin))º-\(Int(forecastDay.tempMax))º"
         
         switch forecastDay.mainWeather {
         case "Clouds":

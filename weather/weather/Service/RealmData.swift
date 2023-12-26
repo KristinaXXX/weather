@@ -28,16 +28,19 @@ class CoordRealm: Object {
     @Persisted var lat: Double
     @Persisted var cityName: String
     @Persisted var userAdd: Bool
+    @Persisted var timezone: Int
 }
 
 class ForecastWeatherRealm: Object {
     @Persisted var createdAt: Date
     @Persisted var coord: CoordRealm?
     @Persisted var dateTimeForecast: Date
+   // @Persisted var dateTimeForecastLocal: Date
     @Persisted var feelsLike: Double
     @Persisted var temp: Double
     @Persisted var clouds: Int
     @Persisted var humidity: Int
+    @Persisted var pop: Int
     @Persisted var windSpeed: Double
     @Persisted var windDeg: Int
     @Persisted var sunset: Date?

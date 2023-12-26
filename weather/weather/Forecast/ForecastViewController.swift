@@ -8,8 +8,10 @@
 import UIKit
 
 protocol ForecastViewControllerDelegate: AnyObject {
+    func cancelUpdate()
     func updateHeader()
     func updateForecast()
+    func showDetails()
 }
 
 class ForecastViewController: UIViewController, ForecastViewControllerDelegate {
@@ -62,9 +64,7 @@ class ForecastViewController: UIViewController, ForecastViewControllerDelegate {
     }
     
     private func updateData() {
-        //viewModel.updateLocation()
         viewModel.loadCurrentWeather()
-       // viewModel.loadForecast()
     }
     
     private func tuneTableView() {
@@ -105,6 +105,14 @@ class ForecastViewController: UIViewController, ForecastViewControllerDelegate {
         forecastTableView.reloadData()
         refreshControl.endRefreshing()
     }
+    
+    func showDetails() {
+        viewModel.showDetails()
+    }
+    
+    func cancelUpdate() {
+        refreshControl.endRefreshing()
+    }
 }
 
 extension ForecastViewController: UITableViewDataSource {
@@ -114,7 +122,9 @@ extension ForecastViewController: UITableViewDataSource {
         case 0:
             let forecastHours = viewModel.takeForecastHours()
             let cell = tableView.dequeueReusableCell(withIdentifier: HoursTableViewCell.id, for: indexPath) as! HoursTableViewCell
+            cell.forecastViewControllerDelegate = self
             cell.update(forecastHours: forecastHours)
+            cell.selectionStyle = .none
             return cell
         case 1:
             let cell = tableView.dequeueReusableCell(withIdentifier: DayTableViewCell.id, for: indexPath) as! DayTableViewCell
@@ -168,8 +178,9 @@ extension ForecastViewController: UITableViewDelegate {
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         switch indexPath.section {
-        case 0:
-            tableView.deselectRow(at: indexPath, animated: false)
+        case 1:
+            tableView.deselectRow(at: indexPath, animated: true)
+            viewModel.showDailyForecast(at: indexPath.row)
         default:
             tableView.deselectRow(at: indexPath, animated: true)
             return

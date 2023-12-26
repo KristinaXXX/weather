@@ -43,5 +43,23 @@ final class Builder {
         let viewController = AddLocationInfoViewController()
         return viewController
     }
+    
+    static func buildDetailsViewController(coordinator: WeatherCoordinatorProtocol, location: CoordRealm) -> UIViewController {
+        let viewModel = DetailsViewModel(coordinator: coordinator, location: location)
+        let viewController = DetailsViewController(viewModel: viewModel)
+        return viewController
+    }
+    
+    static func buildDailyForecastViewController(coordinator: WeatherCoordinatorProtocol, location: CoordRealm, date: Date) -> UIViewController {
+        let viewModel = DailyForecastViewModel(coordinator: coordinator, location: location, date: date)
+        let viewController = DailyForecastViewController(viewModel: viewModel)
+        return viewController
+    }
+    
+    static func buildDailyPagesViewController(coordinator: WeatherCoordinatorProtocol, location: CoordRealm, selectedDay: Date) -> UIViewController {
+        let viewModel = DailyPagesViewModel(coordinator: coordinator, location: location, selectedDay: selectedDay)
+        let viewController = DailyPagesViewController(viewModel: viewModel)
+        return viewController
+    }
 
 }
