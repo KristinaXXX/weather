@@ -133,7 +133,6 @@ extension MainViewController: UIPageViewControllerDelegate {
 
 extension MainViewController: MainViewControllerDelegate {
     func updatePages() {
-        print("updatePages")
         setupPages()
     }
     

@@ -49,7 +49,6 @@ extension LocationService: CLLocationManagerDelegate {
 
 extension CLLocationCoordinate2D: Equatable {
     public static func == (lhs: CLLocationCoordinate2D, rhs: CLLocationCoordinate2D) -> Bool {
-        print("lhs.latitude: \(lhs.latitude) == rhs.latitude: \(rhs.latitude) lhs.longitude: \(lhs.longitude) == rhs.longitude: \(rhs.longitude)")
-        return lhs.latitude == rhs.latitude && lhs.longitude == rhs.longitude
+        return lhs.latitude.magnitude.roundTwoChar() == rhs.latitude.magnitude.roundTwoChar() && lhs.longitude.magnitude.roundTwoChar() == rhs.longitude.magnitude.roundTwoChar()
     }
 }
