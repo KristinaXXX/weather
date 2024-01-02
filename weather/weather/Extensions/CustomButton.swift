@@ -51,10 +51,6 @@ enum CustomFont {
     
     var font: UIFont? {
         switch self {
-        case .Regular14:
-            UIFont(name: "Rubik-Regular", size: 14)
-        case .Regular16:
-            UIFont(name: "Rubik-Regular", size: 16)
         case .SemiBold16:
             UIFont(name: "Rubik-SemiBold", size: 16)
         case .Medium12:
@@ -65,12 +61,16 @@ enum CustomFont {
             UIFont(name: "Rubik-Medium", size: 14)
         case .Medium18:
             UIFont(name: "Rubik-Medium", size: 18)
+        case .Regular14:
+            UIFont(name: "Rubik-Regular", size: 14)
+        case .Regular16:
+            UIFont(name: "Rubik-Regular", size: 16)
         case .Regular12:
-            UIFont(name: "Rubik-Medium", size: 12)
+            UIFont(name: "Rubik-Regular", size: 12)
         case .Regular18:
-            UIFont(name: "Rubik-Medium", size: 18)
+            UIFont(name: "Rubik-Regular", size: 18)
         case .Regular30:
-            UIFont(name: "Rubik-Medium", size: 30)
+            UIFont(name: "Rubik-Regular", size: 30)
         }
     }
 }

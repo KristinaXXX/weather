@@ -40,6 +40,10 @@ class ForecastViewController: UIViewController, ForecastViewControllerDelegate {
         tableView.backgroundColor = .white
         tableView.addSubview(refreshControl)
         
+        if #available(iOS 15.0, *) {
+            tableView.sectionHeaderTopPadding = 0.0
+        }
+        
         return tableView
     }()
     
@@ -64,7 +68,7 @@ class ForecastViewController: UIViewController, ForecastViewControllerDelegate {
     }
     
     private func updateData() {
-        viewModel.loadCurrentWeather()
+        viewModel.updateWeather()
     }
     
     private func tuneTableView() {
@@ -85,7 +89,7 @@ class ForecastViewController: UIViewController, ForecastViewControllerDelegate {
         NSLayoutConstraint.activate([
             forecastTableView.leadingAnchor.constraint(equalTo: safeAreaLayoutGuide.leadingAnchor),
             forecastTableView.trailingAnchor.constraint(equalTo: safeAreaLayoutGuide.trailingAnchor),
-            forecastTableView.topAnchor.constraint(equalTo: safeAreaLayoutGuide.topAnchor),
+            forecastTableView.topAnchor.constraint(equalTo: safeAreaLayoutGuide.topAnchor, constant: 16),
             forecastTableView.bottomAnchor.constraint(equalTo: safeAreaLayoutGuide.bottomAnchor)
         ])
     }
@@ -98,7 +102,7 @@ class ForecastViewController: UIViewController, ForecastViewControllerDelegate {
     func updateHeader() {
         guard let headerView = forecastTableView.headerView(forSection: 0) as? WeatherNowHeaderView else { return }
         let currentWeather = viewModel.takeCurrentWeather()
-        headerView.update(currentWeather)
+        headerView.update(currentWeather, formatTime: viewModel.takeFormatTime())
     }
     
     func updateForecast() {
@@ -123,7 +127,7 @@ extension ForecastViewController: UITableViewDataSource {
             let forecastHours = viewModel.takeForecastHours()
             let cell = tableView.dequeueReusableCell(withIdentifier: HoursTableViewCell.id, for: indexPath) as! HoursTableViewCell
             cell.forecastViewControllerDelegate = self
-            cell.update(forecastHours: forecastHours)
+            cell.update(forecastHours: forecastHours, formatTime: viewModel.takeFormatTime())
             cell.selectionStyle = .none
             return cell
         case 1:
@@ -145,6 +149,7 @@ extension ForecastViewController: UITableViewDataSource {
             return 0
         }
     }
+    
     func numberOfSections(in tableView: UITableView) -> Int {
         return 2
     }
@@ -166,7 +171,7 @@ extension ForecastViewController: UITableViewDelegate {
         case 0:
             let headerView = tableView.dequeueReusableHeaderFooterView(withIdentifier: WeatherNowHeaderView.id) as! WeatherNowHeaderView
             let currentWeather = viewModel.takeCurrentWeather()
-            headerView.update(currentWeather)
+            headerView.update(currentWeather, formatTime: viewModel.takeFormatTime())
             return headerView
         case 1:
             let headerView = tableView.dequeueReusableHeaderFooterView(withIdentifier: DaysHeaderFooterView.id) as! DaysHeaderFooterView

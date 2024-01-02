@@ -14,6 +14,7 @@ final class ForecastViewModel {
     private let coordinates: Coord
     private let location: CoordRealm
     private var forecastDays: [ForecastWeatherRealm] = []
+    private let settingsService = SettingsService()
     
     init(coordinator: WeatherCoordinatorProtocol, location: CoordRealm) {
         self.coordinator = coordinator
@@ -26,7 +27,11 @@ final class ForecastViewModel {
         location.cityName
     }
     
-    func loadCurrentWeather() {
+    func updateWeather() {
+        loadCurrentWeather()
+    }
+    
+    private func loadCurrentWeather() {
         DownloadSaveService.loadSaveCurrentWeather(coordinates: coordinates) { [weak self] result in
             DispatchQueue.main.async {
                 switch result {
@@ -34,14 +39,14 @@ final class ForecastViewModel {
                     self?.forecastViewControllerDelegate?.updateHeader()
                     self?.loadForecast()
                 case .failure(let error):
-                    self?.coordinator.showError("call network failure \(error)")
+                    self?.coordinator.showError("Ошибка загрузки текущей погоды: \(error)")
                     self?.forecastViewControllerDelegate?.cancelUpdate()
                 }
             }
         }
     }
     
-    func loadForecast() {
+    private func loadForecast() {
         DownloadSaveService.loadSaveForecast(coordinates: coordinates) { [weak self] result in
             DispatchQueue.main.async {
                 switch result {
@@ -49,7 +54,7 @@ final class ForecastViewModel {
                     self?.updateForecastDays()
                     self?.forecastViewControllerDelegate?.updateForecast()
                 case .failure(let error):
-                    self?.coordinator.showError("call network failure \(error)")
+                    self?.coordinator.showError("Ошибка загрузки прогноза погоды: \(error)")
                     self?.forecastViewControllerDelegate?.cancelUpdate()
                 }
             }
@@ -64,7 +69,7 @@ final class ForecastViewModel {
         return DownloadSaveService.takeForecastHours(coord: location)
     }
     
-    func updateForecastDays() {
+    private func updateForecastDays() {
         forecastDays = DownloadSaveService.takeForecastDays(coord: location)
     }
     
@@ -74,6 +79,10 @@ final class ForecastViewModel {
     
     func takeForecastDay(at index: Int) -> ForecastWeatherRealm {
         return forecastDays[index]
+    }
+    
+    func takeFormatTime() -> Units {
+        return settingsService.getSetting(typeSetting: .formatTime) ?? Units.hours24
     }
     
     func showDetails() {

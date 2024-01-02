@@ -16,6 +16,7 @@ protocol WeatherCoordinatorProtocol {
     func createForecastsDays(location: CoordRealm, days: [Date]) -> [DailyForecastViewController]
     func addLocationRequest(cityName: String, completion: @escaping ((_:UIAlertAction) -> Void))
     func showMap()
+    func showSettings()
     func closeTopViewController()
     func updatePages()
     func showDetails(location: CoordRealm)
@@ -26,6 +27,8 @@ final class WeatherCoordinator: WeatherCoordinatorProtocol {
     
     private weak var navigationController: UINavigationController?
     weak var mainViewModelDelegate: MainViewModelDelegate?
+    private let settingsService = SettingsService()
+    //private let locationService = LocationService()
     
     init(navigationController: UINavigationController) {
         self.navigationController = navigationController
@@ -33,17 +36,19 @@ final class WeatherCoordinator: WeatherCoordinatorProtocol {
     
     func startApplication() {
         showMainPage()
-        if LocationService.shared.authorizationStatus() == .notDetermined {
+        if !settingsService.getDeterminedPermissionLocation() && LocationService.shared.authorizationStatus() == .notDetermined {
             showLocationPermission()
         }
     }
     
     private func showLocationPermission() {
-        let controller = Builder.buildLocationPermissionViewController { permission in
+        settingsService.updateDeterminedPermissionLocation(value: true)
+        let controller = Builder.buildLocationPermissionViewController { [weak self] permission in
             if permission {
                 LocationService.shared.requestAuthorization()
+                self?.mainViewModelDelegate?.updatePages()
             }
-            self.navigationController?.popViewController(animated: false)
+            self?.navigationController?.popViewController(animated: false)
         }
         navigationController?.pushViewController(controller, animated: false)
     }
@@ -94,6 +99,12 @@ final class WeatherCoordinator: WeatherCoordinatorProtocol {
     func showMap() {
         let controller = Builder.buildMapViewController(coordinator: self)
         navigationController?.pushViewController(controller, animated: true)
+    }
+    
+    func showSettings() {
+        let controller = Builder.buildSettingsViewController(coordinator: self)
+       // navigationController?.pushViewController(controller, animated: true)
+        navigationController?.present(controller, animated: true)
     }
     
     func closeTopViewController() {

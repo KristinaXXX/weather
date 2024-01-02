@@ -61,5 +61,11 @@ final class Builder {
         let viewController = DailyPagesViewController(viewModel: viewModel)
         return viewController
     }
+    
+    static func buildSettingsViewController(coordinator: WeatherCoordinatorProtocol) -> UIViewController {
+        let viewModel = SettingsViewModel(coordinator: coordinator)
+        let viewController = SettingsViewController(viewModel: viewModel)
+        return viewController
+    }
 
 }

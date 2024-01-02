@@ -16,6 +16,7 @@ class HoursTableViewCell: UITableViewCell, HoursTableViewCellDelegate {
     static let id = "HoursTableViewCell"
     private var dataForecastHours: [ForecastWeatherRealm] = []
     weak var forecastViewControllerDelegate: ForecastViewControllerDelegate?
+    private var formatTime: Units = .hours24
     
     private lazy var hoursCollection: UICollectionView = {
         let viewLayout = UICollectionViewFlowLayout()
@@ -92,8 +93,9 @@ class HoursTableViewCell: UITableViewCell, HoursTableViewCellDelegate {
         ])
     }
     
-    func update(forecastHours: [ForecastWeatherRealm]) {
+    func update(forecastHours: [ForecastWeatherRealm], formatTime: Units) {
         dataForecastHours = forecastHours
+        self.formatTime = formatTime
         hoursCollection.reloadData()
     }
     
@@ -117,7 +119,7 @@ extension HoursTableViewCell: UICollectionViewDataSource {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: HourCollectionViewCell.id, for: indexPath) as! HourCollectionViewCell
         if dataForecastHours.count > indexPath.row {
             cell.hoursTableViewCellDelegate = self
-            cell.update(forecastHour: dataForecastHours[indexPath.row])
+            cell.update(forecastHour: dataForecastHours[indexPath.row], formatTime: formatTime)
         }
         return cell
     }
@@ -145,5 +147,4 @@ extension HoursTableViewCell: UICollectionViewDelegateFlowLayout {
     }
 
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat { 16 }
-    
 }

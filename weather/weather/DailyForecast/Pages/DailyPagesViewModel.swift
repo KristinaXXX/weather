@@ -32,7 +32,7 @@ class DailyPagesViewModel {
     func dayText(at index: Int) -> String {
         let dateFormatter = DateFormatter()
         dateFormatter.timeZone = TimeZone(secondsFromGMT: location.timezone)
-        dateFormatter.dateFormat = "dd/MM"
+        dateFormatter.dateFormat = "d/MM"
         return dateFormatter.string(from: days[index])
     }
     

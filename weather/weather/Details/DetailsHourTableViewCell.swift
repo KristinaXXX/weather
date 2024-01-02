@@ -169,7 +169,7 @@ class DetailsHourTableViewCell: UITableViewCell {
         NSLayoutConstraint.activate([
             timeLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
             timeLabel.topAnchor.constraint(equalTo: dateLabel.bottomAnchor, constant: 8),
-            timeLabel.widthAnchor.constraint(equalToConstant: 47)
+            timeLabel.widthAnchor.constraint(equalToConstant: 60)
         ])
         
         NSLayoutConstraint.activate([
@@ -243,18 +243,18 @@ class DetailsHourTableViewCell: UITableViewCell {
 
     }
     
-    func update(forecastDay: ForecastWeatherRealm) {
+    func update(forecastDay: ForecastWeatherRealm, formatTime: Units) {
         let dateFormatter = DateFormatter()
         dateFormatter.timeZone = .current
-        dateFormatter.dateFormat = "dd/MM"
+        dateFormatter.dateFormat = "d/MM"
         
         dateLabel.text = dateFormatter.string(from: forecastDay.dateTimeForecast)
-        dateFormatter.dateFormat = "HH:mm"
+        dateFormatter.dateFormat = formatTime == .hours24 ? "HH:mm" : "h:mm a"
         timeLabel.text = dateFormatter.string(from: forecastDay.dateTimeForecast)
         precipitationValueLabel.text = "\(forecastDay.pop)%"
         cloudValueLabel.text = "\(forecastDay.clouds)%"
         moonLabel.text = "\(forecastDay.descriptionWeather?.uppercasedFirstLetter() ?? ""). По ощущению \(Int(forecastDay.feelsLike))º"
         tempLabel.text = "\(Int(forecastDay.temp))º"
-        windValueLabel.text = "\(Int(forecastDay.windSpeed)) м/с"
+        windValueLabel.text = "\(Int(forecastDay.windSpeed)) \(Units(rawValue: forecastDay.unit) == .fahrenheit ? "mph" : "м/с")"
     }
 }

@@ -24,6 +24,15 @@ class MainViewController: UIPageViewController {
         return createTabButton(imageName: "location.viewfinder", selector: #selector(locationTabButtonPressed(_:)))
     }()
     
+    private lazy var pageControl: UIPageControl = {
+        let pageControl = UIPageControl()
+        pageControl.translatesAutoresizingMaskIntoConstraints = false
+        pageControl.isUserInteractionEnabled = false
+        pageControl.pageIndicatorTintColor = .main
+        pageControl.currentPageIndicatorTintColor = .accent
+        return pageControl
+    }()
+    
     init(viewModel: MainViewModel) {
         self.viewModel = viewModel
         super.init(transitionStyle: .scroll, navigationOrientation: .horizontal, options: [.spineLocation: SpineLocation.min])
@@ -38,6 +47,7 @@ class MainViewController: UIPageViewController {
         super.viewDidLoad()
         setupView()
         setupPages()
+        setupConstraints()
     }
     
     private func setupView() {
@@ -46,6 +56,7 @@ class MainViewController: UIPageViewController {
         self.dataSource = self
         self.delegate = self
         view.backgroundColor = .white
+        view.addSubview(pageControl)
     }
     
     private func setupPages() {
@@ -55,12 +66,25 @@ class MainViewController: UIPageViewController {
             if let forecastViewController = firstPage as? ForecastViewController {
                 title = forecastViewController.cityName
             }
+            pageControl.currentPage = 0
         }
+        pageControl.numberOfPages = pages.count
         reloadInputViews()
+    }
+    
+    func setupConstraints() {
+        let safeAreaLayoutGuide = view.safeAreaLayoutGuide
+        
+        NSLayoutConstraint.activate([
+            pageControl.centerXAnchor.constraint(equalTo: safeAreaLayoutGuide.centerXAnchor),
+            pageControl.topAnchor.constraint(equalTo: safeAreaLayoutGuide.topAnchor, constant: 0),
+            pageControl.heightAnchor.constraint(equalToConstant: 5)
+        ])
     }
     
     @objc
     private func menuTabButtonPressed(_ sender: UIButton) {
+        viewModel.showSettings()
     }
     
     @objc
@@ -94,6 +118,7 @@ extension MainViewController: UIPageViewControllerDelegate {
         if let nextForecastViewController = pages[currentIndex] as? ForecastViewController {
             title = nextForecastViewController.cityName
         }
+        pageControl.currentPage = currentIndex
     }
     
     func pageViewController(_ pageViewController: UIPageViewController, willTransitionTo pendingViewControllers: [UIViewController]) {
@@ -101,6 +126,7 @@ extension MainViewController: UIPageViewControllerDelegate {
         if let nextForecastViewController = pages[currentIndex] as? ForecastViewController {
             title = nextForecastViewController.cityName
         }
+        pageControl.currentPage = currentIndex
     }
 }
 

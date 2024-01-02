@@ -11,6 +11,7 @@ class DetailsViewModel {
     private let coordinator: WeatherCoordinatorProtocol
     private let location: CoordRealm
     private var dataForecastHours: [ForecastWeatherRealm] = []
+    private let settingsService = SettingsService()
     
     init(coordinator: WeatherCoordinatorProtocol, location: CoordRealm) {
         self.coordinator = coordinator
@@ -24,5 +25,9 @@ class DetailsViewModel {
     
     func takeDetailHour(at index: Int) -> ForecastWeatherRealm {
         return dataForecastHours[index]
+    }
+    
+    func takeFormatTime() -> Units {
+        return settingsService.getSetting(typeSetting: .formatTime) ?? Units.hours24
     }
 }

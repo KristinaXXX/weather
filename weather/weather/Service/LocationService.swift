@@ -33,7 +33,6 @@ final class LocationService: NSObject {
     func nowLocation() -> CoordRealm? {
         guard let lon = manager.location?.coordinate.longitude, let lat = manager.location?.coordinate.latitude else { return nil }
         return DownloadSaveService.takeCoord(lat: lat, lon: lon)
-        //return Coord(lon: lon, lat: lat)
     }
 }
 

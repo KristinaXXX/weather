@@ -63,7 +63,7 @@ class DailyForecastViewController: UIViewController {
         NSLayoutConstraint.activate([
             forecastTableView.leadingAnchor.constraint(equalTo: safeAreaLayoutGuide.leadingAnchor),
             forecastTableView.trailingAnchor.constraint(equalTo: safeAreaLayoutGuide.trailingAnchor),
-            forecastTableView.topAnchor.constraint(equalTo: safeAreaLayoutGuide.topAnchor),
+            forecastTableView.topAnchor.constraint(equalTo: safeAreaLayoutGuide.topAnchor, constant: 30),
             forecastTableView.bottomAnchor.constraint(equalTo: safeAreaLayoutGuide.bottomAnchor)
         ])
     }
@@ -85,7 +85,11 @@ extension DailyForecastViewController: UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-       340
+       300
+    }
+    
+    func tableView(_ tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat {
+        80
     }
 }
 
@@ -93,7 +97,7 @@ extension DailyForecastViewController: UITableViewDelegate {
     
     func tableView(_ tableView: UITableView, viewForFooterInSection section: Int) -> UIView? {
         let headerView = tableView.dequeueReusableHeaderFooterView(withIdentifier: DailyForecastFooterView.id) as! DailyForecastFooterView
-        headerView.update(/*viewModel.sunDetails()*/)
+        headerView.update(viewModel.sunDetails())
         return headerView
     }
     

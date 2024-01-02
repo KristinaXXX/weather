@@ -68,23 +68,15 @@ extension Date {
         return calendar.date(byAdding: components, to: startOfDay(timezone))!
     }
     
-//    var endOfDay: Date {
-//        var components = DateComponents()
-//        components.day = 1
-//        components.second = -1
-//        return Calendar.current.date(byAdding: components, to: startOfDay)!
-//    }
-    
-//    var hour: Int {
-//        Calendar.current.component(.hour, from: self)
-//    }
-    
     func hourInTimeZone(_ timezone: Int) -> Int {
         var calendar = Calendar(identifier: .gregorian)
-        //print(TimeZone(secondsFromGMT: timezone)!)
         calendar.timeZone = TimeZone(secondsFromGMT: timezone)!
-        //print( calendar.timeZone)
-        let dateWithTimezone = self //+ TimeInterval(timezone)
-        return calendar.component(.hour, from: dateWithTimezone)
+        return calendar.component(.hour, from: self)
+    }
+    
+    func dayInTimeZone(_ timezone: Int) -> Int {
+        var calendar = Calendar(identifier: .gregorian)
+        calendar.timeZone = TimeZone(secondsFromGMT: timezone)!
+        return calendar.component(.day, from: self)
     }
 }

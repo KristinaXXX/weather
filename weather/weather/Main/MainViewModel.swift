@@ -42,6 +42,10 @@ class MainViewModel {
     func showMap() {
         coordinator.showMap()
     }
+    
+    func showSettings() {
+        coordinator.showSettings()
+    }
 }
 
 extension MainViewModel: MainViewModelDelegate {

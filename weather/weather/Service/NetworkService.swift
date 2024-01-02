@@ -14,14 +14,14 @@ typealias completionForecastResponse = (Result<ForecastResponse, Error>) -> Void
 
 struct NetworkService {
     
-    static func loadCurrentWeather(coordinates: Coord, completion: @escaping completionCurrentWeatherResponse)  {
+    static func loadCurrentWeather(coordinates: Coord, unit: Units?, completion: @escaping completionCurrentWeatherResponse)  {
         Task(priority: .userInitiated) {
             do {
                 var parameters: [String: Any] = [:]
                 parameters["lat"] = coordinates.lat
                 parameters["lon"] = coordinates.lon
                 parameters["appid"] = "01fe6c1ac12469d4fc119476e3979bb7"
-                parameters["units"] = "metric"
+                parameters["units"] = unit == .fahrenheit ? "imperial" : "metric"
                 parameters["lang"] = "ru"
                 let request = AF.request(AppConfiguration.currentWeatherData.rawValue, parameters: parameters)
                 let value = try await request.serializingDecodable(CurrentWeatherResponse.self).value
@@ -32,14 +32,14 @@ struct NetworkService {
         }
     }
     
-    static func loadForecast(coordinates: Coord, completion: @escaping completionForecastResponse)  {
+    static func loadForecast(coordinates: Coord, unit: Units?, completion: @escaping completionForecastResponse)  {
         Task(priority: .userInitiated) {
             do {
                 var parameters: [String: Any] = [:]
                 parameters["lat"] = coordinates.lat
                 parameters["lon"] = coordinates.lon
                 parameters["appid"] = "01fe6c1ac12469d4fc119476e3979bb7"
-                parameters["units"] = "metric"
+                parameters["units"] = unit == .fahrenheit ? "imperial" : "metric"
                 parameters["lang"] = "ru"
                 let request = AF.request(AppConfiguration.forecast5Days.rawValue, parameters: parameters)
                 let value = try await request.serializingDecodable(ForecastResponse.self).value

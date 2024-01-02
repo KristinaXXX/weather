@@ -136,12 +136,14 @@ class WeatherNowHeaderView: UITableViewHeaderFooterView {
         layer.cornerRadius = 5
     }
     
-    func update(_ currentWeather: CurrentWeatherRealm? = nil) {
+    func update(_ currentWeather: CurrentWeatherRealm?, formatTime: Units) {
         guard let weather = currentWeather else { return }
         
+        let timezone = weather.coord?.timezone ?? 0
         let dateFormatter = DateFormatter()
         dateFormatter.dateStyle = .none
         dateFormatter.timeStyle = .short
+        dateFormatter.timeZone = TimeZone(secondsFromGMT: timezone)
         
         maxMinTempLabel.text = "\(Int(weather.tempMin))º / \(Int(weather.tempMax))º"
         mainTempLabel.text = "\(Int(weather.temp))º"
@@ -149,11 +151,11 @@ class WeatherNowHeaderView: UITableViewHeaderFooterView {
         sunriseTimeLabel.text =  weather.sunrise == nil ? "-:-" : dateFormatter.string(from: weather.sunrise!)
         sunsetTimeLabel.text = weather.sunset == nil ? "-:-" : dateFormatter.string(from: weather.sunset!)
         partlyCloudySunLabel.text = "\(weather.clouds)%"
-        windLeafLabel.text = "\(Int(weather.windSpeed)) м/с"
+        windLeafLabel.text = "\(Int(weather.windSpeed)) \(Units(rawValue: weather.unit) == .fahrenheit ? "mph" : "м/с")"
         precipitationLabel.text = "\(weather.humidity)%"
         
-        dateFormatter.dateFormat = "HH:mm, dd MMMM"
-        dateFormatter.locale = .current
+        dateFormatter.dateFormat = formatTime == .hours24 ? "HH:mm, EEEE d MMMM" : "h:mm a, EEEE d MMMM"
+        dateFormatter.locale = Locale(identifier: "ru_RU")
         dateTimeLabel.text = dateFormatter.string(from: Date())
     }
     
@@ -185,7 +187,7 @@ class WeatherNowHeaderView: UITableViewHeaderFooterView {
             mainImageView.topAnchor.constraint(equalTo: topAnchor),
             mainImageView.bottomAnchor.constraint(equalTo: bottomAnchor),
             mainImageView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 16),
-            mainImageView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -16)
+            mainImageView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -16),
         ])
         
         NSLayoutConstraint.activate([

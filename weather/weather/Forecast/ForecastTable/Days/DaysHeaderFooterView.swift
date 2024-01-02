@@ -45,6 +45,7 @@ class DaysHeaderFooterView: UITableViewHeaderFooterView {
     private func addSubviews() {
         addSubview(everyDayLabel)
         addSubview(countDaysLabel)
+        countDaysLabel.isHidden = true
     }
     
     func setupConstraints() {

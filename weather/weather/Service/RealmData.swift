@@ -21,6 +21,7 @@ class CurrentWeatherRealm: Object {
     @Persisted var sunrise: Date?
     @Persisted var descriptionWeather: String?
     @Persisted var mainWeather: String?
+    @Persisted var unit: String
 }
 
 class CoordRealm: Object {
@@ -35,7 +36,6 @@ class ForecastWeatherRealm: Object {
     @Persisted var createdAt: Date
     @Persisted var coord: CoordRealm?
     @Persisted var dateTimeForecast: Date
-   // @Persisted var dateTimeForecastLocal: Date
     @Persisted var feelsLike: Double
     @Persisted var temp: Double
     @Persisted var clouds: Int
@@ -49,4 +49,5 @@ class ForecastWeatherRealm: Object {
     @Persisted var mainWeather: String?
     @Persisted var tempMin: Double
     @Persisted var tempMax: Double
+    @Persisted var unit: String
 }

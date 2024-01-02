@@ -78,13 +78,14 @@ class HourCollectionViewCell: UICollectionViewCell {
         ])
     }
     
-    func update(forecastHour: ForecastWeatherRealm) {
+    func update(forecastHour: ForecastWeatherRealm, formatTime: Units) {
         
         let timezone = forecastHour.coord?.timezone ?? 0
         let dateFormatter = DateFormatter()
         dateFormatter.dateStyle = .none
         dateFormatter.timeStyle = .short
         dateFormatter.timeZone = TimeZone(secondsFromGMT: timezone)
+        dateFormatter.dateFormat = formatTime == .hours24 ? "HH:mm" : "h:mm"
         
         timeLabel.text = dateFormatter.string(from: forecastHour.dateTimeForecast)
         temperatureLabel.text = "\(Int(forecastHour.temp))º"
@@ -103,7 +104,7 @@ class HourCollectionViewCell: UICollectionViewCell {
         let selectHour = Double(forecastHour.dateTimeForecast.hourInTimeZone(timezone))
         let nowHour = Double(Date().hourInTimeZone(timezone))
         let range = selectHour - 1.5 ..< selectHour + 1.5
-        if range.contains(nowHour) {
+        if range.contains(nowHour) && forecastHour.dateTimeForecast.dayInTimeZone(timezone) == Date().dayInTimeZone(timezone) {
             contentView.backgroundColor = .accent
             timeLabel.textColor = .white
             temperatureLabel.textColor = .white

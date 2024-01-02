@@ -19,7 +19,7 @@ class AddLocationInfoViewController: UIViewController {
         var paragraphStyle = NSMutableParagraphStyle()
         paragraphStyle.lineHeightMultiple = 1.11
         paragraphStyle.alignment = .center
-        view.attributedText = NSMutableAttributedString(string: "Чтобы добавить локацию вручную \nнажмите на правую кнопку \nв верхей части экрана", attributes: [NSAttributedString.Key.kern: 0.16, NSAttributedString.Key.paragraphStyle: paragraphStyle])
+        view.attributedText = NSMutableAttributedString(string: "Чтобы добавить локацию вручную \nнажмите на правую кнопку \nв верхней части экрана", attributes: [NSAttributedString.Key.kern: 0.16, NSAttributedString.Key.paragraphStyle: paragraphStyle])
         return view
     }()
     

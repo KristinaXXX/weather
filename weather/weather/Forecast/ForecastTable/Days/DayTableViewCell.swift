@@ -20,8 +20,6 @@ class DayTableViewCell: UITableViewCell {
     private lazy var nextIcon: UIImageView = {
         let imageView = UIImageView(image: .next.withTintColor(.black))
         imageView.translatesAutoresizingMaskIntoConstraints = false
-        let gr = UITapGestureRecognizer(target: self, action: #selector(tapNextIcon))
-        imageView.addGestureRecognizer(gr)
         imageView.isUserInteractionEnabled = true
         imageView.contentMode = .scaleAspectFit
         return imageView
@@ -140,12 +138,12 @@ class DayTableViewCell: UITableViewCell {
     func update(forecastDay: ForecastWeatherRealm) {
         let dateFormatter = DateFormatter()
         dateFormatter.timeZone = TimeZone(secondsFromGMT: forecastDay.coord?.timezone ?? 0)
-        dateFormatter.dateFormat = "dd/MM"
+        dateFormatter.dateFormat = "d/MM"
         
         dateTimeLabel.text = dateFormatter.string(from: forecastDay.dateTimeForecast)
         precipitationLabel.text = "\(forecastDay.pop)%"
         precipitationInfoLabel.text = forecastDay.descriptionWeather?.uppercasedFirstLetter()
-        maxMinTempLabel.text = "\(Int(forecastDay.tempMin))º-\(Int(forecastDay.tempMax))º"
+        maxMinTempLabel.text = "\(Int(forecastDay.tempMin))º..\(Int(forecastDay.tempMax))º"
         
         switch forecastDay.mainWeather {
         case "Clouds":
@@ -157,10 +155,5 @@ class DayTableViewCell: UITableViewCell {
         default:
             weatherIcon.image = .sun
         }
-    }
-    
-    @objc
-    private func tapNextIcon() {
-        print("tapNextIcon")
     }
 }

@@ -14,10 +14,9 @@ class DetailsViewController: UIViewController {
     private lazy var hoursTableView: UITableView = {
         let tableView = UITableView(
             frame: .zero,
-            style: .plain //.grouped
+            style: .plain
         )
         tableView.translatesAutoresizingMaskIntoConstraints = false
-        //tableView.register(DetailsHourTableViewCell.self, forHeaderFooterViewReuseIdentifier: DetailsHourTableViewCell.id)
         tableView.register(DetailsHourTableViewCell.self, forCellReuseIdentifier: DetailsHourTableViewCell.id)
         tableView.backgroundColor = .white
         
@@ -71,7 +70,7 @@ extension DetailsViewController: UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: DetailsHourTableViewCell.id, for: indexPath) as! DetailsHourTableViewCell
-        cell.update(forecastDay: viewModel.takeDetailHour(at: indexPath.row))
+        cell.update(forecastDay: viewModel.takeDetailHour(at: indexPath.row), formatTime: viewModel.takeFormatTime())
         return cell
     }
     
@@ -88,22 +87,6 @@ extension DetailsViewController: UITableViewDataSource {
 }
 
 extension DetailsViewController: UITableViewDelegate {
-    
-//    func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
-//        switch section {
-//        case 0:
-//            let headerView = tableView.dequeueReusableHeaderFooterView(withIdentifier: WeatherNowHeaderView.id) as! WeatherNowHeaderView
-//            let currentWeather = viewModel.takeCurrentWeather()
-//            headerView.update(currentWeather)
-//            return headerView
-//        case 1:
-//            let headerView = tableView.dequeueReusableHeaderFooterView(withIdentifier: DaysHeaderFooterView.id) as! DaysHeaderFooterView
-//            return headerView
-//        default:
-//            return nil
-//        }
-//    }
-    
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: false)
     }

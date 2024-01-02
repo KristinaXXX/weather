@@ -15,7 +15,13 @@ class DailyPagesViewController: UIPageViewController {
     private lazy var pageControl: UISegmentedControl = {
         let segmentedControl = UISegmentedControl()
         segmentedControl.translatesAutoresizingMaskIntoConstraints = false
-        segmentedControl.contentVerticalAlignment = .center
+        segmentedControl.selectedSegmentTintColor = .accent
+        segmentedControl.backgroundColor = .clear
+
+        segmentedControl.setTitleTextAttributes([NSAttributedString.Key.font: CustomFont.Regular16.font!, NSAttributedString.Key.foregroundColor: UIColor.white], for: .selected)
+        segmentedControl.setTitleTextAttributes([NSAttributedString.Key.font: CustomFont.Regular16.font!, NSAttributedString.Key.foregroundColor: UIColor.black], for: .normal)
+        
+        segmentedControl.addTarget(self, action: #selector(pageControlValueChanged), for: .valueChanged)
         return segmentedControl
     }()
     
@@ -32,7 +38,7 @@ class DailyPagesViewController: UIPageViewController {
         super.viewDidLoad()
         setupView()
         setupPages()
-       // setupConstraints() 
+        setupConstraints()
     }
     
     private func setupView() {
@@ -40,7 +46,7 @@ class DailyPagesViewController: UIPageViewController {
         self.delegate = self
         view.backgroundColor = .white
         title = "Дневная погода"
-        view.bringSubviewToFront(pageControl)// .addSubview(pageControl)
+        view.addSubview(pageControl)
     }
     
     private func setupPages() {
@@ -53,6 +59,7 @@ class DailyPagesViewController: UIPageViewController {
             pageControl.insertSegment(withTitle: viewModel.dayText(at: i), at: i, animated: true)
             if viewModel.isSelectDate(at: i) {
                 pageControl.selectedSegmentIndex = i
+                setPage(to: i)
             }
             i += 1
         }
@@ -64,8 +71,25 @@ class DailyPagesViewController: UIPageViewController {
         
         NSLayoutConstraint.activate([
             pageControl.centerXAnchor.constraint(equalTo: safeAreaLayoutGuide.centerXAnchor),
-            pageControl.topAnchor.constraint(equalTo: safeAreaLayoutGuide.topAnchor, constant: 16)
+            pageControl.leadingAnchor.constraint(equalTo: safeAreaLayoutGuide.leadingAnchor, constant: 16),
+            pageControl.trailingAnchor.constraint(equalTo: safeAreaLayoutGuide.trailingAnchor, constant: -16),
+            pageControl.topAnchor.constraint(equalTo: safeAreaLayoutGuide.topAnchor)//, constant: 16)
         ])
+    }
+    
+    private func setPage(to indexTo: Int) {
+        guard indexTo < pages.count else { return }
+        var direction: NavigationDirection = .forward
+        if let dailyForecastViewController = viewControllers?.first as? DailyForecastViewController, let currentIndex = pages.firstIndex(of: dailyForecastViewController ) {
+            direction = indexTo > currentIndex ? .forward : .reverse
+        }
+        setViewControllers([pages[indexTo]], direction: direction, animated: true)
+    }
+    
+    @objc
+    private func pageControlValueChanged() {
+        let currentPageIndex = pageControl.selectedSegmentIndex
+        setPage(to: currentPageIndex)
     }
 }
 
@@ -88,14 +112,14 @@ extension DailyPagesViewController: UIPageViewControllerDataSource {
 
 extension DailyPagesViewController: UIPageViewControllerDelegate {
     func pageViewController(_ pageViewController: UIPageViewController, didFinishAnimating finished: Bool, previousViewControllers: [UIViewController], transitionCompleted completed: Bool) {
-//        guard !completed else { return }
-//        guard let dailyForecastViewController = previousViewControllers.first as? DailyForecastViewController, let currentIndex = pages.firstIndex(of: dailyForecastViewController) else { return }
-        
-      // title = nextForecastViewController.cityName
+        guard !completed else { return }
+        guard let dailyForecastViewController = previousViewControllers.first as? DailyForecastViewController, let currentIndex = pages.firstIndex(of: dailyForecastViewController) else { return }
+       
+        pageControl.selectedSegmentIndex = currentIndex
     }
     
     func pageViewController(_ pageViewController: UIPageViewController, willTransitionTo pendingViewControllers: [UIViewController]) {
-        //guard let dailyForecastViewController = pendingViewControllers.first as? DailyForecastViewController, let currentIndex = pages.firstIndex(of: dailyForecastViewController) else { return }
-       // title = nextForecastViewController.cityName
+        guard let dailyForecastViewController = pendingViewControllers.first as? DailyForecastViewController, let currentIndex = pages.firstIndex(of: dailyForecastViewController) else { return }
+        pageControl.selectedSegmentIndex = currentIndex
     }
 }
