@@ -11,6 +11,14 @@ class WeatherNowHeaderView: UITableViewHeaderFooterView {
     
     static let id = "WeatherNowHeaderView"
     
+    private lazy var mainView: UIView = {
+        let view = UIView()
+        view.backgroundColor = .accent
+        view.layer.cornerRadius = 5
+        view.translatesAutoresizingMaskIntoConstraints = false
+        return view
+    }()
+    
     private lazy var mainImageView: UIImageView = {
         let imageView = UIImageView(image: .rectangle)
         imageView.translatesAutoresizingMaskIntoConstraints = false
@@ -133,7 +141,7 @@ class WeatherNowHeaderView: UITableViewHeaderFooterView {
     }
     
     private func setupView() {
-        layer.cornerRadius = 5
+        contentView.layer.cornerRadius = 5
     }
     
     func update(_ currentWeather: CurrentWeatherRealm?, formatTime: Units) {
@@ -154,12 +162,13 @@ class WeatherNowHeaderView: UITableViewHeaderFooterView {
         windLeafLabel.text = "\(Int(weather.windSpeed)) \(Units(rawValue: weather.unit) == .fahrenheit ? "mph" : "м/с")"
         precipitationLabel.text = "\(weather.humidity)%"
         
-        dateFormatter.dateFormat = formatTime == .hours24 ? "HH:mm, EEEE d MMMM" : "h:mm a, EEEE d MMMM"
+        dateFormatter.dateFormat = formatTime == .hours24 ? "HH:mm, E d MMMM" : "h:mm a, E d MMMM"
         dateFormatter.locale = Locale(identifier: "ru_RU")
         dateTimeLabel.text = dateFormatter.string(from: Date())
     }
     
     private func addSubviews() {
+        addSubview(mainView)
         addSubview(mainImageView)
         
         addSubview(sunsetIcon)
@@ -182,12 +191,19 @@ class WeatherNowHeaderView: UITableViewHeaderFooterView {
     }
     
     func setupConstraints() {
+        
+        NSLayoutConstraint.activate([
+            mainView.topAnchor.constraint(equalTo: topAnchor),
+            mainView.bottomAnchor.constraint(equalTo: bottomAnchor),
+            mainView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 16),
+            mainView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -16),
+        ])
+        
         NSLayoutConstraint.activate([
             mainImageView.centerXAnchor.constraint(equalTo: centerXAnchor),
             mainImageView.topAnchor.constraint(equalTo: topAnchor),
             mainImageView.bottomAnchor.constraint(equalTo: bottomAnchor),
-            mainImageView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 16),
-            mainImageView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -16),
+            mainImageView.widthAnchor.constraint(equalToConstant: 344)
         ])
         
         NSLayoutConstraint.activate([
@@ -212,7 +228,7 @@ class WeatherNowHeaderView: UITableViewHeaderFooterView {
         ])
         
         NSLayoutConstraint.activate([
-            windLeafIcon.leadingAnchor.constraint(equalTo: partlyCloudySunLabel.trailingAnchor, constant: 19),
+            windLeafIcon.leadingAnchor.constraint(equalTo: partlyCloudySunLabel.trailingAnchor, constant: 12),
             windLeafIcon.centerYAnchor.constraint(equalTo: partlyCloudySunIcon.centerYAnchor),
             windLeafIcon.widthAnchor.constraint(equalToConstant: 25),
             windLeafIcon.heightAnchor.constraint(equalToConstant: 16)

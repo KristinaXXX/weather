@@ -58,6 +58,3 @@ enum AppConfiguration: String, CaseIterable {
         URL(string: self.rawValue)
     }
 }
-
-let u = "https://api.openweathermap.org/data/2.5/forecast?lat=51.46&lon=55.06&appid=01fe6c1ac12469d4fc119476e3979bb7&units=metric&lang=ru"
-let c = "https://api.openweathermap.org/data/2.5/weather?lat=51.46&lon=55.06&appid=01fe6c1ac12469d4fc119476e3979bb7&units=metric&lang=ru"

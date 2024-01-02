@@ -10,11 +10,12 @@ import CoreLocation
 
 final class LocationService: NSObject {
     
-    static let shared = LocationService()
     private let manager = CLLocationManager()
     private var nowCoordinate: CLLocationCoordinate2D?
+    private let coordinator: WeatherCoordinatorProtocol?
     
-    private override init() {
+    init(coordinator: WeatherCoordinatorProtocol) {
+        self.coordinator = coordinator
         super.init()
         manager.delegate = self
     }
@@ -39,6 +40,16 @@ final class LocationService: NSObject {
 extension LocationService: CLLocationManagerDelegate {
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         guard let coordinates = locations.first else { return }
-        nowCoordinate = CLLocationCoordinate2D(latitude: coordinates.coordinate.latitude, longitude: coordinates.coordinate.longitude)
+        let newCoordinate = CLLocationCoordinate2D(latitude: coordinates.coordinate.latitude, longitude: coordinates.coordinate.longitude)
+        guard nowCoordinate != newCoordinate else { return }
+        nowCoordinate = newCoordinate
+        coordinator?.updatePages()
+    }
+}
+
+extension CLLocationCoordinate2D: Equatable {
+    public static func == (lhs: CLLocationCoordinate2D, rhs: CLLocationCoordinate2D) -> Bool {
+        print("lhs.latitude: \(lhs.latitude) == rhs.latitude: \(rhs.latitude) lhs.longitude: \(lhs.longitude) == rhs.longitude: \(rhs.longitude)")
+        return lhs.latitude == rhs.latitude && lhs.longitude == rhs.longitude
     }
 }

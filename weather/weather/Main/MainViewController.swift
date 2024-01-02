@@ -9,6 +9,7 @@ import UIKit
 
 protocol MainViewControllerDelegate: AnyObject {
     func updatePages()
+    func updateTitleCurrentPage(title: String)
 }
 
 class MainViewController: UIPageViewController {
@@ -132,6 +133,11 @@ extension MainViewController: UIPageViewControllerDelegate {
 
 extension MainViewController: MainViewControllerDelegate {
     func updatePages() {
+        print("updatePages")
         setupPages()
+    }
+    
+    func updateTitleCurrentPage(title: String) {
+        self.title = title
     }
 }

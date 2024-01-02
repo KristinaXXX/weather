@@ -37,6 +37,7 @@ final class ForecastViewModel {
                 switch result {
                 case .success(_):
                     self?.forecastViewControllerDelegate?.updateHeader()
+                    self?.coordinator.updateTitleCurrentPage(title: self?.cityName() ?? "")
                     self?.loadForecast()
                 case .failure(let error):
                     self?.coordinator.showError("Ошибка загрузки текущей погоды: \(error)")

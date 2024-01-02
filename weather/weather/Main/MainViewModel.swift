@@ -10,6 +10,7 @@ import UIKit
 
 protocol MainViewModelDelegate: AnyObject {
     func updatePages()
+    func updateTitleCurrentPage(title: String)
 }
 
 class MainViewModel {
@@ -17,16 +18,18 @@ class MainViewModel {
     private var coordinator: WeatherCoordinatorProtocol
     private var locations: [CoordRealm] = []
     weak var mainViewControllerDelegate: MainViewControllerDelegate?
+    private let locationService: LocationService
     
-    init(coordinator: WeatherCoordinatorProtocol) {
+    init(coordinator: WeatherCoordinatorProtocol, locationService: LocationService) {
         self.coordinator = coordinator
-        self.coordinator.mainViewModelDelegate = self
+        self.locationService = locationService
+        self.coordinator.mainViewModelDelegate = self        
         updateLocations()
     }
     
     public func updateLocations() {
         locations = DownloadSaveService.takeLocations()
-        if let nowCoordRealm = LocationService.shared.nowLocation() {
+        if let nowCoordRealm = locationService.nowLocation() {
             locations.insert(nowCoordRealm, at: 0)
         }
     }
@@ -52,5 +55,9 @@ extension MainViewModel: MainViewModelDelegate {
     func updatePages() {
         updateLocations()
         mainViewControllerDelegate?.updatePages()
+    }
+    
+    func updateTitleCurrentPage(title: String) {
+        mainViewControllerDelegate?.updateTitleCurrentPage(title: title)
     }
 }

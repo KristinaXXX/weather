@@ -27,8 +27,8 @@ final class Builder {
         return viewController
     }
     
-    static func buildMainViewController(coordinator: WeatherCoordinatorProtocol) -> UIViewController {
-        let viewModel = MainViewModel(coordinator: coordinator)
+    static func buildMainViewController(coordinator: WeatherCoordinatorProtocol, locationService: LocationService) -> UIViewController {
+        let viewModel = MainViewModel(coordinator: coordinator, locationService: locationService)
         let viewController = MainViewController(viewModel: viewModel)
         return viewController
     }

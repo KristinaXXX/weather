@@ -10,7 +10,6 @@ import UIKit
 protocol WeatherCoordinatorProtocol {
     var mainViewModelDelegate: MainViewModelDelegate? { get set }
     
-    func weatherNowUpdated()
     func showError(_ text: String)
     func createForecasts(locations: [CoordRealm]) -> [UIViewController]
     func createForecastsDays(location: CoordRealm, days: [Date]) -> [DailyForecastViewController]
@@ -21,6 +20,7 @@ protocol WeatherCoordinatorProtocol {
     func updatePages()
     func showDetails(location: CoordRealm)
     func showDailyPages(location: CoordRealm, selectedDay: Date)
+    func updateTitleCurrentPage(title: String)
 }
 
 final class WeatherCoordinator: WeatherCoordinatorProtocol {
@@ -28,15 +28,16 @@ final class WeatherCoordinator: WeatherCoordinatorProtocol {
     private weak var navigationController: UINavigationController?
     weak var mainViewModelDelegate: MainViewModelDelegate?
     private let settingsService = SettingsService()
-    //private let locationService = LocationService()
+    private var locationService: LocationService?
     
     init(navigationController: UINavigationController) {
         self.navigationController = navigationController
+        self.locationService = LocationService(coordinator: self)
     }
     
     func startApplication() {
         showMainPage()
-        if !settingsService.getDeterminedPermissionLocation() && LocationService.shared.authorizationStatus() == .notDetermined {
+        if !settingsService.getDeterminedPermissionLocation() && locationService?.authorizationStatus() == .notDetermined {
             showLocationPermission()
         }
     }
@@ -45,8 +46,7 @@ final class WeatherCoordinator: WeatherCoordinatorProtocol {
         settingsService.updateDeterminedPermissionLocation(value: true)
         let controller = Builder.buildLocationPermissionViewController { [weak self] permission in
             if permission {
-                LocationService.shared.requestAuthorization()
-                self?.mainViewModelDelegate?.updatePages()
+                self?.locationService?.requestAuthorization()
             }
             self?.navigationController?.popViewController(animated: false)
         }
@@ -54,7 +54,7 @@ final class WeatherCoordinator: WeatherCoordinatorProtocol {
     }
     
     func showMainPage() {
-        let controller = Builder.buildMainViewController(coordinator: self)
+        let controller = Builder.buildMainViewController(coordinator: self, locationService: locationService!)
         navigationController?.pushViewController(controller, animated: true)
     }
     
@@ -103,7 +103,6 @@ final class WeatherCoordinator: WeatherCoordinatorProtocol {
     
     func showSettings() {
         let controller = Builder.buildSettingsViewController(coordinator: self)
-       // navigationController?.pushViewController(controller, animated: true)
         navigationController?.present(controller, animated: true)
     }
     
@@ -115,8 +114,8 @@ final class WeatherCoordinator: WeatherCoordinatorProtocol {
         mainViewModelDelegate?.updatePages()        
     }
     
-    func weatherNowUpdated() {
-        
+    func updateTitleCurrentPage(title: String) {
+        mainViewModelDelegate?.updateTitleCurrentPage(title: title)
     }
     
     func showDetails(location: CoordRealm) {

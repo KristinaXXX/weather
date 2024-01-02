@@ -26,7 +26,6 @@ class MapViewController: UIViewController {
     private lazy var mapView: MKMapView = {
         let view = MKMapView()
         view.translatesAutoresizingMaskIntoConstraints = false
-        //view.showsUserTrackingButton = true
         view.mapType = .standard
         view.showsUserLocation = true
         
@@ -49,13 +48,10 @@ class MapViewController: UIViewController {
     }
     
     private func setupMap() {
-        //manager.delegate = self
-        
-        if manager.authorizationStatus == .notDetermined {
-            manager.requestWhenInUseAuthorization()
-        }
+//        if manager.authorizationStatus == .notDetermined {
+//            manager.requestWhenInUseAuthorization()
+//        }
         manager.startUpdatingLocation()
-        //mapView.delegate = self
     }
     
     private func setupView() {
@@ -104,24 +100,3 @@ class MapViewController: UIViewController {
         }
     }
 }
-
-//extension MapViewController: CLLocationManagerDelegate {
-//    func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
-//        guard let coordinates = locations.first else { return }
-//        nowCoordinate = CLLocationCoordinate2D(latitude: coordinates.coordinate.latitude, longitude: coordinates.coordinate.longitude)
-//    }
-//}
-//
-//extension MapViewController: MKMapViewDelegate {
-//    
-//    func mapView(_ mapView: MKMapView, didSelect view: MKAnnotationView) {
-//        //trackButton.isHidden = false
-//    }
-//    
-//    func mapView(_ mapView: MKMapView, rendererFor overlay: MKOverlay) -> MKOverlayRenderer {
-//        let renderer = MKPolylineRenderer(overlay: overlay)
-//        renderer.strokeColor = .tintColor
-//        renderer.lineWidth = 4.0
-//        return renderer
-//    }
-//}

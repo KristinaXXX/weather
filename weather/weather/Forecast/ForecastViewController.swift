@@ -17,7 +17,7 @@ protocol ForecastViewControllerDelegate: AnyObject {
 class ForecastViewController: UIViewController, ForecastViewControllerDelegate {
     
     private let viewModel: ForecastViewModel
-    let cityName: String
+    var cityName: String
     
     private lazy var refreshControl: UIRefreshControl = {
         let refreshControl = UIRefreshControl()
@@ -103,6 +103,7 @@ class ForecastViewController: UIViewController, ForecastViewControllerDelegate {
         guard let headerView = forecastTableView.headerView(forSection: 0) as? WeatherNowHeaderView else { return }
         let currentWeather = viewModel.takeCurrentWeather()
         headerView.update(currentWeather, formatTime: viewModel.takeFormatTime())
+        cityName = viewModel.cityName()
     }
     
     func updateForecast() {

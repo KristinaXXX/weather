@@ -15,7 +15,7 @@ class DailyForecastViewController: UIViewController {
     private lazy var forecastTableView: UITableView = {
         let tableView = UITableView(
             frame: .zero,
-            style: .plain //.grouped
+            style: .plain
         )
         tableView.translatesAutoresizingMaskIntoConstraints = false
 

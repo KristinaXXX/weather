@@ -73,7 +73,7 @@ class DailyPagesViewController: UIPageViewController {
             pageControl.centerXAnchor.constraint(equalTo: safeAreaLayoutGuide.centerXAnchor),
             pageControl.leadingAnchor.constraint(equalTo: safeAreaLayoutGuide.leadingAnchor, constant: 16),
             pageControl.trailingAnchor.constraint(equalTo: safeAreaLayoutGuide.trailingAnchor, constant: -16),
-            pageControl.topAnchor.constraint(equalTo: safeAreaLayoutGuide.topAnchor)//, constant: 16)
+            pageControl.topAnchor.constraint(equalTo: safeAreaLayoutGuide.topAnchor)
         ])
     }
     

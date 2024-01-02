@@ -39,7 +39,6 @@ class AddLocationInfoViewController: UIViewController {
         NSLayoutConstraint.activate([
             infoLabel.centerYAnchor.constraint(equalTo: safeAreaLayoutGuide.centerYAnchor),
             infoLabel.centerXAnchor.constraint(equalTo: safeAreaLayoutGuide.centerXAnchor)
-            //infoLabel.widthAnchor.constraint(equalToConstant: 322),
         ])
     }
 

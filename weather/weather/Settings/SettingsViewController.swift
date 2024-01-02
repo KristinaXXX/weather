@@ -114,10 +114,8 @@ class SettingsViewController: UIViewController, SettingsViewControllerDelegate {
     }
     
     func saveButtonPressed() {
-        //onSelectPermission?(true)
         dismiss(animated: true)
     }
-
 }
 
 protocol SettingsViewControllerDelegate: AnyObject {

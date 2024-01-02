@@ -20,7 +20,6 @@ extension UIViewController {
         let newWidth = newHeight*imageU.size.width/imageU.size.height
         
         button.setImage(imageU.imageWith(newSize: CGSize(width: newWidth, height: newHeight)), for: .normal)
-        //button.setImage(imageU, for: .normal)
         button.addTarget(self, action: selector, for: .touchUpInside)
         return UIBarButtonItem(customView: button)
         
@@ -49,9 +48,6 @@ extension Double {
 }
 
 extension Date {
-//    var startOfDay: Date {
-//        Calendar.current.startOfDay(for: self)
-//    }
     
     func startOfDay(_ timezone: Int) -> Date {
         var calendar = Calendar(identifier: .gregorian)

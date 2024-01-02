@@ -27,7 +27,6 @@ class HoursTableViewCell: UITableViewCell, HoursTableViewCellDelegate {
         collectionView.backgroundColor = .white
        
         collectionView.register(HourCollectionViewCell.self, forCellWithReuseIdentifier: HourCollectionViewCell.id)
-        //collectionView.isUserInteractionEnabled = true
         collectionView.showsHorizontalScrollIndicator = false
         
         return collectionView
