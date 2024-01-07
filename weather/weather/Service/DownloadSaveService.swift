@@ -75,7 +75,7 @@ final class DownloadSaveService {
                 try realm.write {
                     realm.add(forecastWeatherRealm)
                 }
-                //deleteForecastWeather(to: createdAt, coord: coordRealm)
+                deleteOldForecastWeather(coord: coordRealm)
             } catch {
                 print(error)
             }
@@ -114,7 +114,7 @@ final class DownloadSaveService {
             try realm.write {
                 realm.add(currentWeatherRealm)
             }
-            //deleteCurrentWeather(to: createdAt, coord: coordRealm)
+            deleteCurrentWeather(to: createdAt, coord: coordRealm)
         } catch {
             print(error)
         }
@@ -251,11 +251,11 @@ final class DownloadSaveService {
         }
     }
     
-    private static func deleteForecastWeather(to date: Date, coord: CoordRealm) {
+    private static func deleteOldForecastWeather(coord: CoordRealm) {
         guard let realm = try? RealmService.getRealm() else { return }
         do {
             try realm.write {
-                let forecastsWeatherRealm = realm.objects(ForecastWeatherRealm.self).filter("coord == %coord AND createdAt < %date", coord, date)
+                let forecastsWeatherRealm = realm.objects(ForecastWeatherRealm.self).filter("coord == %coord AND dateTimeForecast < %date", coord, Date().startOfDay(coord.timezone))
                 realm.delete(forecastsWeatherRealm)
             }
         } catch {
