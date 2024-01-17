@@ -12,31 +12,23 @@ final class DownloadSaveService {
     
     private static let settingsService = SettingsService()
     
-    static func loadSaveCurrentWeather(coordinates: Coord, completion: @escaping (Result<Bool, Error>) -> Void) {
-        
+    static func loadSaveCurrentWeather(coordinates: Coord) async throws {
         let unit = settingsService.getSetting(typeSetting: .temperature)
-        NetworkService.loadCurrentWeather(coordinates: coordinates, unit: unit) { result in
-            switch result {
-            case .success(let currentWeatherModel):
-                createCurrentWeather(currentWeatherModel: currentWeatherModel, unit: unit)
-                completion(.success(true))
-            case .failure(let error):
-                completion(.failure(error))
-            }
+        do {
+            let currentWeatherModel = try await NetworkService.loadCurrentWeather(coordinates: coordinates, unit: unit)
+            createCurrentWeather(currentWeatherModel: currentWeatherModel, unit: unit)
+        } catch {
+            throw error
         }
     }
     
-    static func loadSaveForecast(coordinates: Coord, completion: @escaping (Result<Bool, Error>) -> Void) {
-        
+    static func loadSaveForecast(coordinates: Coord) async throws {
         let unit = settingsService.getSetting(typeSetting: .temperature)
-        NetworkService.loadForecast(coordinates: coordinates, unit: unit) { result in
-            switch result {
-            case .success(let forecastModel):
-                createForecast(forecastModel: forecastModel, unit: unit)
-                completion(.success(true))
-            case .failure(let error):
-                completion(.failure(error))
-            }
+        do {
+            let forecastModel = try await NetworkService.loadForecast(coordinates: coordinates, unit: unit)
+            createForecast(forecastModel: forecastModel, unit: unit)
+        } catch {
+            throw error
         }
     }
     

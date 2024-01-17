@@ -32,31 +32,35 @@ final class ForecastViewModel {
     }
     
     private func loadCurrentWeather() {
-        DownloadSaveService.loadSaveCurrentWeather(coordinates: coordinates) { [weak self] result in
-            DispatchQueue.main.async {
-                switch result {
-                case .success(_):
-                    self?.forecastViewControllerDelegate?.updateHeader()
-                    self?.coordinator.updateTitleCurrentPage(title: self?.cityName() ?? "")
-                    self?.loadForecast()
-                case .failure(let error):
-                    self?.coordinator.showError("Ошибка загрузки текущей погоды: \(error)")
-                    self?.forecastViewControllerDelegate?.cancelUpdate()
+        Task(priority: .userInitiated) {
+            do {
+                try await DownloadSaveService.loadSaveCurrentWeather(coordinates: coordinates)
+                DispatchQueue.main.async {
+                    self.forecastViewControllerDelegate?.updateHeader()
+                    self.coordinator.updateTitleCurrentPage(title: self.cityName())
+                    self.loadForecast()
+                }
+            } catch {
+                DispatchQueue.main.async {
+                    self.coordinator.showError("Ошибка загрузки текущей погоды: \(error)")
+                    self.forecastViewControllerDelegate?.cancelUpdate()
                 }
             }
         }
     }
     
     private func loadForecast() {
-        DownloadSaveService.loadSaveForecast(coordinates: coordinates) { [weak self] result in
-            DispatchQueue.main.async {
-                switch result {
-                case .success(_):
-                    self?.updateForecastDays()
-                    self?.forecastViewControllerDelegate?.updateForecast()
-                case .failure(let error):
-                    self?.coordinator.showError("Ошибка загрузки прогноза погоды: \(error)")
-                    self?.forecastViewControllerDelegate?.cancelUpdate()
+        Task(priority: .userInitiated) {
+            do {
+                try await DownloadSaveService.loadSaveForecast(coordinates: coordinates)
+                DispatchQueue.main.async {
+                    self.updateForecastDays()
+                    self.forecastViewControllerDelegate?.updateForecast()
+                }
+            } catch {
+                DispatchQueue.main.async {
+                    self.coordinator.showError("Ошибка загрузки прогноза погоды: \(error)")
+                    self.forecastViewControllerDelegate?.cancelUpdate()
                 }
             }
         }
