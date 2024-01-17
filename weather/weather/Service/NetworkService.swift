@@ -9,12 +9,12 @@ import Foundation
 import Alamofire
 import UIKit
 
-typealias completionCurrentWeatherResponse = (Result<CurrentWeatherResponse, Error>) -> Void
-typealias completionForecastResponse = (Result<ForecastResponse, Error>) -> Void
+typealias completionCurrentWeatherModel = (Result<CurrentWeatherModel, Error>) -> Void
+typealias completionForecastModel = (Result<ForecastModel, Error>) -> Void
 
 struct NetworkService {
     
-    static func loadCurrentWeather(coordinates: Coord, unit: Units?, completion: @escaping completionCurrentWeatherResponse)  {
+    static func loadCurrentWeather(coordinates: Coord, unit: Units?, completion: @escaping completionCurrentWeatherModel)  {
         Task(priority: .userInitiated) {
             do {
                 var parameters: [String: Any] = [:]
@@ -23,8 +23,8 @@ struct NetworkService {
                 parameters["appid"] = "01fe6c1ac12469d4fc119476e3979bb7"
                 parameters["units"] = unit == .fahrenheit ? "imperial" : "metric"
                 parameters["lang"] = "ru"
-                let request = AF.request(AppConfiguration.currentWeatherData.rawValue, parameters: parameters)
-                let value = try await request.serializingDecodable(CurrentWeatherResponse.self).value
+                let request = AF.request(APIConfiguration.currentWeatherData.rawValue, parameters: parameters)
+                let value = try await request.serializingDecodable(CurrentWeatherModel.self).value
                 completion(.success(value))
             } catch {
                 completion(.failure(NetworkError.error(error.localizedDescription)))
@@ -32,7 +32,7 @@ struct NetworkService {
         }
     }
     
-    static func loadForecast(coordinates: Coord, unit: Units?, completion: @escaping completionForecastResponse)  {
+    static func loadForecast(coordinates: Coord, unit: Units?, completion: @escaping completionForecastModel)  {
         Task(priority: .userInitiated) {
             do {
                 var parameters: [String: Any] = [:]
@@ -41,8 +41,8 @@ struct NetworkService {
                 parameters["appid"] = "01fe6c1ac12469d4fc119476e3979bb7"
                 parameters["units"] = unit == .fahrenheit ? "imperial" : "metric"
                 parameters["lang"] = "ru"
-                let request = AF.request(AppConfiguration.forecast5Days.rawValue, parameters: parameters)
-                let value = try await request.serializingDecodable(ForecastResponse.self).value
+                let request = AF.request(APIConfiguration.forecast5Days.rawValue, parameters: parameters)
+                let value = try await request.serializingDecodable(ForecastModel.self).value
                 completion(.success(value))
             } catch {
                 completion(.failure(NetworkError.error(error.localizedDescription)))
@@ -51,7 +51,7 @@ struct NetworkService {
     }
 }
 
-enum AppConfiguration: String, CaseIterable {
+enum APIConfiguration: String, CaseIterable {
     case currentWeatherData = "https://api.openweathermap.org/data/2.5/weather"
     case forecast5Days = "https://api.openweathermap.org/data/2.5/forecast"
     var url: URL? {

@@ -17,8 +17,8 @@ final class DownloadSaveService {
         let unit = settingsService.getSetting(typeSetting: .temperature)
         NetworkService.loadCurrentWeather(coordinates: coordinates, unit: unit) { result in
             switch result {
-            case .success(let currentWeatherResponse):
-                createCurrentWeather(currentWeatherResponse: currentWeatherResponse, unit: unit)
+            case .success(let currentWeatherModel):
+                createCurrentWeather(currentWeatherModel: currentWeatherModel, unit: unit)
                 completion(.success(true))
             case .failure(let error):
                 completion(.failure(error))
@@ -31,8 +31,8 @@ final class DownloadSaveService {
         let unit = settingsService.getSetting(typeSetting: .temperature)
         NetworkService.loadForecast(coordinates: coordinates, unit: unit) { result in
             switch result {
-            case .success(let forecastResponse):
-                createForecast(forecastResponse: forecastResponse, unit: unit)
+            case .success(let forecastModel):
+                createForecast(forecastModel: forecastModel, unit: unit)
                 completion(.success(true))
             case .failure(let error):
                 completion(.failure(error))
@@ -40,14 +40,14 @@ final class DownloadSaveService {
         }
     }
     
-    private static func createForecast(forecastResponse: ForecastResponse, unit: Units?) {
+    private static func createForecast(forecastModel: ForecastModel, unit: Units?) {
         guard let realm = try? RealmService.getRealm() else { return }
-        guard let city = forecastResponse.city, let coord = city.coord else { return }
+        guard let city = forecastModel.city, let coord = city.coord else { return }
         guard let coordRealm = takeCoord(lat: coord.lat, lon: coord.lon, cityName: city.name, timezone: city.timezone) else { return }
         
         let createdAt = Date()
         
-        for itemList in forecastResponse.list {
+        for itemList in forecastModel.list {
             let forecastWeatherRealm = ForecastWeatherRealm()
             
             forecastWeatherRealm.coord = coordRealm
@@ -82,31 +82,31 @@ final class DownloadSaveService {
         }
     }
     
-    private static func createCurrentWeather(currentWeatherResponse: CurrentWeatherResponse, unit: Units?) {
+    private static func createCurrentWeather(currentWeatherModel: CurrentWeatherModel, unit: Units?) {
         guard let realm = try? RealmService.getRealm() else { return }
-        guard let coord = currentWeatherResponse.coord else { return }
+        guard let coord = currentWeatherModel.coord else { return }
         
-        guard let coordRealm = takeCoord(lat: coord.lat, lon: coord.lon, cityName: currentWeatherResponse.name, timezone: currentWeatherResponse.timezone) else { return }
+        guard let coordRealm = takeCoord(lat: coord.lat, lon: coord.lon, cityName: currentWeatherModel.name, timezone: currentWeatherModel.timezone) else { return }
         
         let currentWeatherRealm = CurrentWeatherRealm()
         let createdAt = Date()
         
         currentWeatherRealm.createdAt = createdAt
         currentWeatherRealm.coord = coordRealm
-        currentWeatherRealm.temp = currentWeatherResponse.main.temp ?? 0
-        currentWeatherRealm.clouds = currentWeatherResponse.clouds.all ?? 0
-        currentWeatherRealm.tempMin = currentWeatherResponse.main.tempMin ?? 0
-        currentWeatherRealm.tempMax = currentWeatherResponse.main.tempMax ?? 0
-        currentWeatherRealm.humidity = currentWeatherResponse.main.humidity ?? 0
-        currentWeatherRealm.windSpeed = currentWeatherResponse.wind.speed ?? 0
-        if let sunset = currentWeatherResponse.sys.sunset {
+        currentWeatherRealm.temp = currentWeatherModel.main.temp ?? 0
+        currentWeatherRealm.clouds = currentWeatherModel.clouds.all ?? 0
+        currentWeatherRealm.tempMin = currentWeatherModel.main.tempMin ?? 0
+        currentWeatherRealm.tempMax = currentWeatherModel.main.tempMax ?? 0
+        currentWeatherRealm.humidity = currentWeatherModel.main.humidity ?? 0
+        currentWeatherRealm.windSpeed = currentWeatherModel.wind.speed ?? 0
+        if let sunset = currentWeatherModel.sys.sunset {
             currentWeatherRealm.sunset = NSDate(timeIntervalSince1970: TimeInterval(sunset)) as Date
         }
-        if let sunrise = currentWeatherResponse.sys.sunrise {
+        if let sunrise = currentWeatherModel.sys.sunrise {
             currentWeatherRealm.sunrise = NSDate(timeIntervalSince1970: TimeInterval(sunrise)) as Date
         }
-        currentWeatherRealm.descriptionWeather = currentWeatherResponse.weather.first?.description ?? ""
-        currentWeatherRealm.mainWeather = currentWeatherResponse.weather.first?.main ?? ""
+        currentWeatherRealm.descriptionWeather = currentWeatherModel.weather.first?.description ?? ""
+        currentWeatherRealm.mainWeather = currentWeatherModel.weather.first?.main ?? ""
         
         currentWeatherRealm.unit = unit?.rawValue ?? Units.celsius.rawValue
         

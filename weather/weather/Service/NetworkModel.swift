@@ -8,9 +8,9 @@
 import Foundation
 import Alamofire
 
-// MARK: - CurrentWeatherResponse
+// MARK: - CurrentWeatherModel
 
-struct CurrentWeatherResponse: Codable {
+struct CurrentWeatherModel: Codable {
     let coord: Coord?
     let weather: [Weather]
     let base: String?
@@ -65,8 +65,8 @@ struct Wind: Codable {
     let gust: Double?
 }
 
-// MARK: - ForecastResponse
-struct ForecastResponse: Codable {
+// MARK: - ForecastModel
+struct ForecastModel: Codable {
     let cod: String
     let message, cnt: Int
     let list: [List]

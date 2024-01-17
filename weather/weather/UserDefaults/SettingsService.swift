@@ -14,11 +14,11 @@ final class SettingsService {
     private let userDefaultsStorage = UserDefaultsStorage()
     
     func updateSettings(settings: [Settings]) {
-        userDefaultsStorage.save(key: keyUnit, items: settings)
+        userDefaultsStorage.save(key: keyUnit, value: settings)
     }
     
     func getSettings() -> [Settings] {
-        if let storageSettings = userDefaultsStorage.load(key: keyUnit) {
+        if let storageSettings: [Settings] = userDefaultsStorage.load(key: keyUnit) {
             storageSettings
         } else {
             Settings.make()
@@ -32,7 +32,7 @@ final class SettingsService {
     }
     
     func getDeterminedPermissionLocation() -> Bool {
-        if let storageValue = userDefaultsStorage.loadValue(key: keyPermissionLocation) {
+        if let storageValue: Bool = userDefaultsStorage.load(key: keyPermissionLocation) {
             storageValue
         } else {
             false
